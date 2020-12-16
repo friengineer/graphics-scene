@@ -26,10 +26,14 @@ class SceneWidget: public QGLWidget{
 
 	void cube(bool shadow=false);
 	void floor();
+	void fog();
 
 	void polygon(int, int, int, int);
 
 	double _angle;
+	QImage* fogTexture;
+	unsigned int fogTextureWidth;
+  unsigned int fogTextureHeight;
 
 	};
 

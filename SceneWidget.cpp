@@ -1,5 +1,8 @@
 #include <GL/glu.h>
+// #include <GL/glut.h>
 #include <QGLWidget>
+#include <string>
+#include <QImage>
 #include "SceneWidget.h"
 
 // Setting up material properties
@@ -31,13 +34,39 @@ static materialStruct whiteShinyMaterials = {
   100.0
 };
 
-// constructor
-SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent), _angle(0.0){}
+static materialStruct goldMaterials = {
+  { 0.24725, 0.1995, 0.0745, 1.0},
+  { 0.75164, 0.60648, 0.22648, 1.0},
+  { 0.628281, 0.555802, 0.366065, 1.0},
+  100
+};
 
-// called when OpenGL context is set up
+static materialStruct green = {
+  { 0, 0.4, 0, 1.0},
+  { 0, 0, 0, 1.0},
+  { 0, 0, 0, 1.0},
+  0
+};
+
+static materialStruct grey = {
+  { 0.7, 0.7, 0.7, 1.0},
+  { 0, 0, 0, 1.0},
+  { 0, 0, 0, 1.0},
+  0
+};
+
+// constructor
+SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent), _angle(0.0){
+  const std::string& fogFile = "fog-overlay-free.jpg";
+  fogTexture = new QImage(QString(fogFile.c_str()));
+  fogTextureWidth = fogTexture->width();
+  fogTextureHeight = fogTexture->height();
+}
+
 void SceneWidget::initializeGL(){
 	// set the widget background colour
-	glClearColor(0.3, 0.3, 0.3, 0.0);
+	// glClearColor(0.3, 0.3, 0.3, 0.0);
+  glClearColor(0, 0, 0.15, 0.0);
 }
 
 // called every time the widget is resized
@@ -53,18 +82,18 @@ void SceneWidget::resizeGL(int w, int h){
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-4.0, 4.0, -4.0, 4.0, -4.0, 4.0);
+	glOrtho(-8.0, 8.0, -8.0, 8.0, -8.0, 8.0);
 }
 
 void SceneWidget::floor(){
-  // create one face with brassMaterials
-  materialStruct* p_front = &redPlasticMaterials;
+  materialStruct* material = &green;
   GLfloat floor = -0.01;
+  // glColor3f(0,0.3,0);
 
-  glMaterialfv(GL_FRONT, GL_AMBIENT, p_front->ambient);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, p_front->diffuse);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, p_front->specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, p_front->shininess);
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
   glNormal3f(0.,1.,0.);
   glBegin(GL_POLYGON);
@@ -75,8 +104,82 @@ void SceneWidget::floor(){
   glEnd();
 }
 
+void SceneWidget::fog(){
+  GLfloat normals[][3] = { {1., 0. ,0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
+
+  // if (b_shadow == true){
+  //       glDisable(GL_LIGHTING);
+  //       glColor3f(0.,0.,0.);
+  // }
+  //
+  materialStruct* material = &grey;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+
+
+  glNormal3fv(normals[0]);
+  glColor3f(0.2, 0.2, 0.2);
+  glBegin(GL_POLYGON);
+  glVertex3f(10, -1.0, 10);
+  glVertex3f(10, -1.0, -10);
+  glVertex3f(10, 1.0, -10);
+  glVertex3f(10, 1.0, 10);
+  glEnd();
+
+  // glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  // glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  // glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  // glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  glNormal3fv(normals[3]);
+  glBegin(GL_POLYGON);
+  glVertex3f(-10, -1.0, -10);
+  glVertex3f(10, -1.0, -10);
+  glVertex3f(10, 1.0, -10);
+  glVertex3f(-1.0, 1.0, -10);
+  glEnd();
+
+  glNormal3fv(normals[2]);
+  glBegin(GL_POLYGON);
+  glVertex3f(-10, -1.0, 10);
+  glVertex3f(10, -1.0, 10);
+  glVertex3f(10,  1.0, 10);
+  glVertex3f(-10,  1.0, 10);
+  glEnd();
+
+  glNormal3fv(normals[1]);
+  glBegin(GL_POLYGON);
+  glVertex3f(-10, -1.0, 10);
+  glVertex3f(-10, -1.0, -10);
+  glVertex3f(-10,  1.0, -10);
+  glVertex3f(-10,  1.0, 10);
+  glEnd();
+
+  glNormal3fv(normals[4]);
+  glBegin(GL_POLYGON);
+  glVertex3f(10,  1.0, 10);
+  glVertex3f(10,  1.0, -10);
+  glVertex3f(-10,  1.0, -10);
+  glVertex3f(-10,  1.0, 10);
+  glEnd();
+
+  glNormal3fv(normals[5]);
+  glBegin(GL_POLYGON);
+  glVertex3f(10,  -1.0, 10);
+  glVertex3f(10,  -1.0, -10);
+  glVertex3f(-10,  -1.0, -10);
+  glVertex3f(-10,  -1.0, 10);
+  glEnd();
+
+  glEnable(GL_LIGHTING);
+}
+
 void SceneWidget::cube(bool b_shadow){
-  // Here are the normals, correctly calculated for the cube faces below
+  // normals of the cube faces
   GLfloat normals[][3] = { {1., 0. ,0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
 
   if (b_shadow == true){
@@ -84,13 +187,12 @@ void SceneWidget::cube(bool b_shadow){
         glColor3f(0.,0.,0.);
   }
 
-  // create one face with brassMaterials
-  materialStruct* p_front = &brassMaterials;
+  materialStruct* material = &goldMaterials;
 
-  glMaterialfv(GL_FRONT, GL_AMBIENT, p_front->ambient);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, p_front->diffuse);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, p_front->specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, p_front->shininess);
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
   glNormal3fv(normals[0]);
   glBegin(GL_POLYGON);
@@ -100,13 +202,10 @@ void SceneWidget::cube(bool b_shadow){
   glVertex3f( 1.0,  1.0,  1.0);
   glEnd();
 
-  // and the others white
-  p_front = &whiteShinyMaterials;
-
-  glMaterialfv(GL_FRONT, GL_AMBIENT, p_front->ambient);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, p_front->diffuse);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, p_front->specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, p_front->shininess);
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
   glNormal3fv(normals[3]);
   glBegin(GL_POLYGON);
@@ -171,13 +270,18 @@ void SceneWidget::paintGL(){
 	glLightf (GL_LIGHT0, GL_SPOT_CUTOFF,180.);
 
 	GLfloat m[16];
-	for (int i = 0; i < 16; i++)m[i] = 0.0;
+	for (int i = 0; i < 16; i++){
+    m[i] = 0.0;
+  }
+
 	m[0] = m[5] = m[10] = 1.0;
 	m[7] = -1.0/light_pos[1];
 	glPopMatrix();
 	this->floor();
 
 	// Done light
+
+  this->fog();
 
 	// You must set the matrix mode to model view directly before enabling the depth test
   glMatrixMode(GL_MODELVIEW);
