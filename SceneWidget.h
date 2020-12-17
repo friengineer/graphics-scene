@@ -26,6 +26,7 @@ class SceneWidget: public QGLWidget{
 
 	void cube(bool shadow=false);
 	void floor();
+	void gravestone();
 	void fog();
 
 	void polygon(int, int, int, int);

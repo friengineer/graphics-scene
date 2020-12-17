@@ -49,9 +49,9 @@ static materialStruct green = {
 };
 
 static materialStruct grey = {
-  { 0.7, 0.7, 0.7, 1.0},
-  { 0, 0, 0, 1.0},
-  { 0, 0, 0, 1.0},
+  { 1, 1, 1, 0},
+  { 1, 1, 1, 0},
+  { 0, 0, 0, 0},
   0
 };
 
@@ -82,12 +82,13 @@ void SceneWidget::resizeGL(int w, int h){
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-8.0, 8.0, -8.0, 8.0, -8.0, 8.0);
+	glOrtho(-15.0, 15.0, -15.0, 15.0, -15.0, 15.0);
 }
 
 void SceneWidget::floor(){
   materialStruct* material = &green;
-  GLfloat floor = -0.01;
+  // GLfloat floor = -0.01;
+  GLfloat floor = 0;
   // glColor3f(0,0.3,0);
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
@@ -102,6 +103,79 @@ void SceneWidget::floor(){
     glVertex3f(10.0, floor, -10.0);
     glVertex3f(-10.0, floor, -10.0);
   glEnd();
+}
+
+void SceneWidget::gravestone(){
+  GLfloat normals[][3] = { {1., 0. ,0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
+
+  // if (b_shadow == true){
+  //       glDisable(GL_LIGHTING);
+  //       glColor3f(0.,0.,0.);
+  // }
+  //
+  materialStruct* material = &redPlasticMaterials;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+
+
+  glNormal3fv(normals[0]);
+  glBegin(GL_POLYGON);
+  glVertex3f(0.75, 0, 0.25);
+  glVertex3f(0.75, 0, -0.25);
+  glVertex3f(0.75, 4, -0.25);
+  glVertex3f(0.75, 4, 0.25);
+  glEnd();
+
+  // glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  // glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  // glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  // glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  glNormal3fv(normals[3]);
+  glBegin(GL_POLYGON);
+  glVertex3f(-0.75, 0, -0.25);
+  glVertex3f(0.75, 0, -0.25);
+  glVertex3f(0.75, 4, -0.25);
+  glVertex3f(-0.75, 4, -0.25);
+  glEnd();
+
+  glNormal3fv(normals[2]);
+  glBegin(GL_POLYGON);
+  glVertex3f(-0.75, 0, 0.25);
+  glVertex3f(0.75, 0, 0.25);
+  glVertex3f(0.75, 4, 0.25);
+  glVertex3f(-0.75, 4, 0.25);
+  glEnd();
+
+  glNormal3fv(normals[1]);
+  glBegin(GL_POLYGON);
+  glVertex3f(-0.75, 0, 0.25);
+  glVertex3f(-0.75, 0, -0.25);
+  glVertex3f(-0.75, 4, -0.25);
+  glVertex3f(-0.75, 4, 0.25);
+  glEnd();
+
+  glNormal3fv(normals[4]);
+  glBegin(GL_POLYGON);
+  glVertex3f(0.75, 4, 0.25);
+  glVertex3f(0.75, 4, -0.25);
+  glVertex3f(-0.75, 4, -0.25);
+  glVertex3f(-0.75, 4, 0.25);
+  glEnd();
+
+  glNormal3fv(normals[5]);
+  glBegin(GL_POLYGON);
+  glVertex3f(0.75, 0, 0.25);
+  glVertex3f(0.75, 0, -0.25);
+  glVertex3f(-0.75, 0, -0.25);
+  glVertex3f(-0.75, 0, 0.25);
+  glEnd();
+
+  glEnable(GL_LIGHTING);
 }
 
 void SceneWidget::fog(){
@@ -122,10 +196,10 @@ void SceneWidget::fog(){
 
 
   glNormal3fv(normals[0]);
-  glColor3f(0.2, 0.2, 0.2);
+  // glColor3f(0.2, 0.2, 0.2);
   glBegin(GL_POLYGON);
-  glVertex3f(10, -1.0, 10);
-  glVertex3f(10, -1.0, -10);
+  glVertex3f(10, 0, 10);
+  glVertex3f(10, 0, -10);
   glVertex3f(10, 1.0, -10);
   glVertex3f(10, 1.0, 10);
   glEnd();
@@ -137,42 +211,42 @@ void SceneWidget::fog(){
 
   glNormal3fv(normals[3]);
   glBegin(GL_POLYGON);
-  glVertex3f(-10, -1.0, -10);
-  glVertex3f(10, -1.0, -10);
+  glVertex3f(-10, 0, -10);
+  glVertex3f(10, 0, -10);
   glVertex3f(10, 1.0, -10);
-  glVertex3f(-1.0, 1.0, -10);
+  glVertex3f(-10, 1.0, -10);
   glEnd();
 
   glNormal3fv(normals[2]);
   glBegin(GL_POLYGON);
-  glVertex3f(-10, -1.0, 10);
-  glVertex3f(10, -1.0, 10);
-  glVertex3f(10,  1.0, 10);
-  glVertex3f(-10,  1.0, 10);
+  glVertex3f(-10, 0, 10);
+  glVertex3f(10, 0, 10);
+  glVertex3f(10, 1.0, 10);
+  glVertex3f(-10, 1.0, 10);
   glEnd();
 
   glNormal3fv(normals[1]);
   glBegin(GL_POLYGON);
-  glVertex3f(-10, -1.0, 10);
-  glVertex3f(-10, -1.0, -10);
-  glVertex3f(-10,  1.0, -10);
-  glVertex3f(-10,  1.0, 10);
+  glVertex3f(-10, 0, 10);
+  glVertex3f(-10, 0, -10);
+  glVertex3f(-10, 1.0, -10);
+  glVertex3f(-10, 1.0, 10);
   glEnd();
 
   glNormal3fv(normals[4]);
   glBegin(GL_POLYGON);
-  glVertex3f(10,  1.0, 10);
-  glVertex3f(10,  1.0, -10);
-  glVertex3f(-10,  1.0, -10);
-  glVertex3f(-10,  1.0, 10);
+  glVertex3f(10, 1.0, 10);
+  glVertex3f(10, 1.0, -10);
+  glVertex3f(-10, 1.0, -10);
+  glVertex3f(-10, 1.0, 10);
   glEnd();
 
   glNormal3fv(normals[5]);
   glBegin(GL_POLYGON);
-  glVertex3f(10,  -1.0, 10);
-  glVertex3f(10,  -1.0, -10);
-  glVertex3f(-10,  -1.0, -10);
-  glVertex3f(-10,  -1.0, 10);
+  glVertex3f(10, 0, 10);
+  glVertex3f(10, 0, -10);
+  glVertex3f(-10, 0, -10);
+  glVertex3f(-10, 0, 10);
   glEnd();
 
   glEnable(GL_LIGHTING);
@@ -281,10 +355,34 @@ void SceneWidget::paintGL(){
 
 	// Done light
 
+  // You must set the matrix mode to model view directly before enabling the depth test
+  glMatrixMode(GL_MODELVIEW);
+
+  glPushMatrix();
+  glTranslatef(-9, 0, 4);
+  this->gravestone();
+  glTranslatef(2, 0, 0);
+  this->gravestone();
+  glTranslatef(2, 0, 0);
+  this->gravestone();
+  glTranslatef(2, 0, 0);
+  this->gravestone();
+
+  glTranslatef(0, 0, -5);
+  this->gravestone();
+  glTranslatef(-2, 0, 0);
+  this->gravestone();
+  glTranslatef(-2, 0, 0);
+  this->gravestone();
+  glTranslatef(-2, 0, 0);
+  this->gravestone();
+
+
+  glPopMatrix();
+
   this->fog();
 
-	// You must set the matrix mode to model view directly before enabling the depth test
-  glMatrixMode(GL_MODELVIEW);
+
 	glPushMatrix();
 	glTranslatef(0.,2.,0.);
 	glRotatef(_angle, 0.,1., 0.);
