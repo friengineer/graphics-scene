@@ -13,6 +13,7 @@ class SceneWidget: public QGLWidget{
 	public slots:
   // called by the timer in the main window
 	void updateAngle();
+	void updateTransparency(int value);
 
 	protected:
 	// called when OpenGL context is set up
@@ -32,6 +33,7 @@ class SceneWidget: public QGLWidget{
 	void polygon(int, int, int, int);
 
 	double _angle;
+	float opacity;
 	QImage* fogTexture;
 	unsigned int fogTextureWidth;
   unsigned int fogTextureHeight;

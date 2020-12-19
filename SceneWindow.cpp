@@ -13,19 +13,25 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	sceneWidget = new SceneWidget(this);
 	windowLayout->addWidget(sceneWidget);
 
-	nVerticesSlider = new QSlider(Qt::Horizontal);
-	windowLayout->addWidget(nVerticesSlider);
+	transparencySlider = new QSlider(Qt::Horizontal);
+	transparencySlider->setValue(50);
+	windowLayout->addWidget(transparencySlider);
+
+	speedDial = new QDial;
+	windowLayout->addWidget(speedDial);
 
 	ptimer = new QTimer(this);
 	ptimer->start(20);
 
+	connect(transparencySlider, SIGNAL(sliderMoved(int)), sceneWidget, SLOT(updateTransparency(int)));
 	connect(ptimer, SIGNAL(timeout()), sceneWidget, SLOT(updateAngle()));
 }
 
 // destructor
 SceneWindow::~SceneWindow(){
 	delete ptimer;
-	delete nVerticesSlider;
+	delete speedDial;
+	delete transparencySlider;
 	delete sceneWidget;
 	delete windowLayout;
 	delete actionQuit;
@@ -35,8 +41,11 @@ SceneWindow::~SceneWindow(){
 
 // reset interface elements
 void SceneWindow::ResetInterface(){
-	nVerticesSlider->setMinimum(3);
-	nVerticesSlider->setMaximum(30);
+	transparencySlider->setMinimum(0);
+	transparencySlider->setMaximum(100);
+
+	speedDial->setMinimum(1);
+	speedDial->setMaximum(60);
 
 	//don't use the slider for now
 

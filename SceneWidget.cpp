@@ -48,15 +48,8 @@ static materialStruct green = {
   0
 };
 
-static materialStruct grey = {
-  { 1, 1, 1, 0.5},
-  { 0, 0, 0, 0.5},
-  { 0, 0, 0, 0.5},
-  0
-};
-
 // constructor
-SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent), _angle(0.0){
+SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent), _angle(0.0), opacity(0.5){
   const std::string& fogFile = "fog-overlay-free.jpg";
   fogTexture = new QImage(QString(fogFile.c_str()));
   fogTextureWidth = fogTexture->width();
@@ -179,6 +172,13 @@ void SceneWidget::gravestone(){
 }
 
 void SceneWidget::fog(){
+  materialStruct grey = {
+    { 1, 1, 1, opacity},
+    { 0, 0, 0, opacity},
+    { 0, 0, 0, opacity},
+    0
+  };
+
   GLfloat normals[][3] = { {1., 0. ,0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
 
   // if (b_shadow == true){
@@ -326,6 +326,11 @@ void SceneWidget::cube(bool b_shadow){
 
 void SceneWidget::updateAngle(){
   _angle += 1.0;
+  this->repaint();
+}
+
+void SceneWidget::updateTransparency(int value){
+  opacity = value;
   this->repaint();
 }
 

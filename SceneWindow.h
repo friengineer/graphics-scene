@@ -3,6 +3,7 @@
 
 #include <QGLWidget>
 #include <QMenuBar>
+#include <QDial>
 #include <QSlider>
 #include <QTimer>
 #include <QBoxLayout>
@@ -20,7 +21,8 @@ class SceneWindow: public QWidget{
 
 	QBoxLayout *windowLayout;
 	SceneWidget *sceneWidget;
-	QSlider *nVerticesSlider;
+	QDial *speedDial;
+	QSlider *transparencySlider;
 
 	QTimer *ptimer;
 
