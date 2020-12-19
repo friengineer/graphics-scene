@@ -49,9 +49,9 @@ static materialStruct green = {
 };
 
 static materialStruct grey = {
-  { 1, 1, 1, 0},
-  { 1, 1, 1, 0},
-  { 0, 0, 0, 0},
+  { 1, 1, 1, 0.5},
+  { 0, 0, 0, 0.5},
+  { 0, 0, 0, 0.5},
   0
 };
 
@@ -112,7 +112,7 @@ void SceneWidget::gravestone(){
   //       glDisable(GL_LIGHTING);
   //       glColor3f(0.,0.,0.);
   // }
-  //
+
   materialStruct* material = &redPlasticMaterials;
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
@@ -185,7 +185,7 @@ void SceneWidget::fog(){
   //       glDisable(GL_LIGHTING);
   //       glColor3f(0.,0.,0.);
   // }
-  //
+
   materialStruct* material = &grey;
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
@@ -380,9 +380,6 @@ void SceneWidget::paintGL(){
 
   glPopMatrix();
 
-  this->fog();
-
-
 	glPushMatrix();
 	glTranslatef(0.,2.,0.);
 	glRotatef(_angle, 0.,1., 0.);
@@ -402,6 +399,10 @@ void SceneWidget::paintGL(){
 	this->cube(true);
 	glPopMatrix();
 	glPopAttrib();
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  this->fog();
 
 	glLoadIdentity();
   gluLookAt(1.,1.,1., 0.0,0.0,0.0, 0.0,1.0,0.0);
