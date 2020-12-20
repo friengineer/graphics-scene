@@ -9,6 +9,9 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	fileMenu->addAction(actionQuit);
 
 	windowLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+	// windowLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+	// need to create separate control widget
+	controlsLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
 	sceneWidget = new SceneWidget(this);
 	windowLayout->addWidget(sceneWidget);
@@ -16,9 +19,13 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	transparencySlider = new QSlider(Qt::Horizontal);
 	transparencySlider->setValue(50);
 	windowLayout->addWidget(transparencySlider);
+	// controlsLayout->addWidget(transparencySlider);
 
 	speedDial = new QDial;
 	windowLayout->addWidget(speedDial);
+	// controlsLayout->addWidget(speedDial);
+
+	// windowLayout->addLayout(controlsLayout);
 
 	ptimer = new QTimer(this);
 	ptimer->start(20);
@@ -33,6 +40,7 @@ SceneWindow::~SceneWindow(){
 	delete speedDial;
 	delete transparencySlider;
 	delete sceneWidget;
+	delete controlsLayout;
 	delete windowLayout;
 	delete actionQuit;
 	delete fileMenu;

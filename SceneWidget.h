@@ -2,6 +2,7 @@
 #define __GL_POLYGON_WIDGET_H__ 1
 
 #include <QGLWidget>
+#include "Image.h"
 
 class SceneWidget: public QGLWidget{
 
@@ -28,12 +29,16 @@ class SceneWidget: public QGLWidget{
 	void cube(bool shadow=false);
 	void floor();
 	void gravestone();
+	void ghost();
 	void fog();
 
 	void polygon(int, int, int, int);
 
 	double _angle;
 	float opacity;
+
+	Image marc;
+
 	QImage* fogTexture;
 	unsigned int fogTextureWidth;
   unsigned int fogTextureHeight;

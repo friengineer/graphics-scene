@@ -1,5 +1,5 @@
 #include <GL/glu.h>
-// #include <GL/glut.h>
+#include <GL/glut.h>
 #include <QGLWidget>
 #include <string>
 #include <QImage>
@@ -48,8 +48,15 @@ static materialStruct green = {
   0
 };
 
+static materialStruct white = {
+  { 1, 1, 1, 1.0},
+  { 1, 1, 1, 1.0},
+  { 0, 0, 0, 1.0},
+  0
+};
+
 // constructor
-SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent), _angle(0.0), opacity(0.5){
+SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent), _angle(0.0), opacity(0.5), marc("Marc_Dekamps.ppm"){
   const std::string& fogFile = "fog-overlay-free.jpg";
   fogTexture = new QImage(QString(fogFile.c_str()));
   fogTextureWidth = fogTexture->width();
@@ -72,6 +79,13 @@ void SceneWidget::resizeGL(int w, int h){
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
+  //
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -167,6 +181,23 @@ void SceneWidget::gravestone(){
   glVertex3f(-0.75, 0, -0.25);
   glVertex3f(-0.75, 0, 0.25);
   glEnd();
+
+  glEnable(GL_LIGHTING);
+}
+
+void SceneWidget::ghost(){
+  materialStruct* material = &white;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  float radius = 1;
+
+  glutSolidSphere(radius, 10, 10);
+  glTranslatef(0, -2 * radius, 0);
+  glutSolidIcosahedron();
 
   glEnable(GL_LIGHTING);
 }
@@ -330,7 +361,7 @@ void SceneWidget::updateAngle(){
 }
 
 void SceneWidget::updateTransparency(int value){
-  opacity = value;
+  opacity = (float) value/100;
   this->repaint();
 }
 
@@ -383,6 +414,13 @@ void SceneWidget::paintGL(){
   this->gravestone();
 
 
+  glPopMatrix();
+
+  glPushMatrix();
+  glRotatef(-_angle, 0, 1, 0);
+  glTranslatef(0, 10, -7);
+  this->ghost();
+  // glDrawPixels(_image.Width(),_image.Height(),GL_RGB, GL_UNSIGNED_BYTE,_image.imageField());
   glPopMatrix();
 
 	glPushMatrix();

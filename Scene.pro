@@ -8,10 +8,11 @@ INCLUDEPATH += . /opt/local/include
 
 QT += widgets opengl gui
 
-LIBS += -lGLU
+LIBS += -lglut -lGLU
 
 # Input
-HEADERS += SceneWidget.h SceneWindow.h 
+HEADERS += SceneWidget.h SceneWindow.h Image.h
 SOURCES += SceneMain.cpp \
            SceneWidget.cpp \
-           SceneWindow.cpp
+           SceneWindow.cpp \
+           Image.cpp
