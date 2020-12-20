@@ -80,12 +80,12 @@ void SceneWidget::resizeGL(int w, int h){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
-  //
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
+
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -194,10 +194,20 @@ void SceneWidget::ghost(){
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
   float radius = 1;
+  GLUquadric *head = gluNewQuadric();
+  gluQuadricDrawStyle(head, GLU_FILL);
+  gluQuadricTexture(head, GL_TRUE);
+  // glutSolidSphere(radius, 10, 10);
+  gluSphere(head, radius, 10, 10);
+  glRasterPos2i(0,0);
+  glDrawPixels(marc.Width(),marc.Height(),GL_RGB, GL_UNSIGNED_BYTE,marc.imageField());
 
-  glutSolidSphere(radius, 10, 10);
   glTranslatef(0, -2 * radius, 0);
-  glutSolidIcosahedron();
+
+  GLUquadric *body = gluNewQuadric();
+  // glutSolidIcosahedron();
+  glRotatef(90, 1, 0, 0);
+  gluCylinder(body, radius, radius, 5, 10, 10);
 
   glEnable(GL_LIGHTING);
 }
@@ -212,19 +222,12 @@ void SceneWidget::fog(){
 
   GLfloat normals[][3] = { {1., 0. ,0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
 
-  // if (b_shadow == true){
-  //       glDisable(GL_LIGHTING);
-  //       glColor3f(0.,0.,0.);
-  // }
-
   materialStruct* material = &grey;
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
-
-
 
   glNormal3fv(normals[0]);
   // glColor3f(0.2, 0.2, 0.2);
@@ -234,11 +237,6 @@ void SceneWidget::fog(){
   glVertex3f(10, 1.0, -10);
   glVertex3f(10, 1.0, 10);
   glEnd();
-
-  // glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
-  // glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
-  // glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
-  // glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
   glNormal3fv(normals[3]);
   glBegin(GL_POLYGON);
@@ -420,28 +418,27 @@ void SceneWidget::paintGL(){
   glRotatef(-_angle, 0, 1, 0);
   glTranslatef(0, 10, -7);
   this->ghost();
-  // glDrawPixels(_image.Width(),_image.Height(),GL_RGB, GL_UNSIGNED_BYTE,_image.imageField());
   glPopMatrix();
 
-	glPushMatrix();
-	glTranslatef(0.,2.,0.);
-	glRotatef(_angle, 0.,1., 0.);
-
-	this->cube();
-	glTranslatef(0.,-2.,0);
-
-	// Do the projective stuff
-	glPushMatrix();
-	glPushAttrib(GL_CURRENT_BIT);
-
-	glTranslatef(light_pos[0],light_pos[1],light_pos[2]);
-	glMultMatrixf(m);
-	glTranslatef(-light_pos[0],-light_pos[1],-light_pos[2]);
-
-	glColor3f(0.,0.,0.);
-	this->cube(true);
-	glPopMatrix();
-	glPopAttrib();
+	// glPushMatrix();
+	// glTranslatef(0.,2.,0.);
+	// glRotatef(_angle, 0.,1., 0.);
+  //
+	// this->cube();
+	// glTranslatef(0.,-2.,0);
+  //
+	// // Do the projective stuff
+	// glPushMatrix();
+	// glPushAttrib(GL_CURRENT_BIT);
+  //
+	// glTranslatef(light_pos[0],light_pos[1],light_pos[2]);
+	// glMultMatrixf(m);
+	// glTranslatef(-light_pos[0],-light_pos[1],-light_pos[2]);
+  //
+	// glColor3f(0.,0.,0.);
+	// this->cube(true);
+	// glPopMatrix();
+	// glPopAttrib();
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

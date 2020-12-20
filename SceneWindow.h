@@ -22,6 +22,7 @@ class SceneWindow: public QWidget{
 	QBoxLayout *windowLayout;
 	QBoxLayout *controlsLayout;
 	SceneWidget *sceneWidget;
+	QWidget *controlsWidget;
 	QDial *speedDial;
 	QSlider *transparencySlider;
 

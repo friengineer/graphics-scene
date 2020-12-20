@@ -8,22 +8,27 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 
 	fileMenu->addAction(actionQuit);
 
-	windowLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
-	// windowLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+	// windowLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+	windowLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 	// need to create separate control widget
 	controlsLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
 	sceneWidget = new SceneWidget(this);
+	controlsWidget = new QWidget(this);
+	controlsWidget->setLayout(controlsLayout);
+	controlsWidget->setFixedWidth(200);
+
 	windowLayout->addWidget(sceneWidget);
+	windowLayout->addWidget(controlsWidget);
 
 	transparencySlider = new QSlider(Qt::Horizontal);
 	transparencySlider->setValue(50);
-	windowLayout->addWidget(transparencySlider);
-	// controlsLayout->addWidget(transparencySlider);
+	// windowLayout->addWidget(transparencySlider);
+	controlsLayout->addWidget(transparencySlider);
 
 	speedDial = new QDial;
-	windowLayout->addWidget(speedDial);
-	// controlsLayout->addWidget(speedDial);
+	// windowLayout->addWidget(speedDial);
+	controlsLayout->addWidget(speedDial);
 
 	// windowLayout->addLayout(controlsLayout);
 
@@ -39,6 +44,7 @@ SceneWindow::~SceneWindow(){
 	delete ptimer;
 	delete speedDial;
 	delete transparencySlider;
+	delete controlsWidget;
 	delete sceneWidget;
 	delete controlsLayout;
 	delete windowLayout;
@@ -60,6 +66,6 @@ void SceneWindow::ResetInterface(){
 	//	nVerticesSlider->setValue(thePolygon->nVertices);
 
 	// now force refresh
-	sceneWidget->update();
+	controlsWidget->update();
 	update();
 }
