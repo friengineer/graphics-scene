@@ -76,6 +76,7 @@ void SceneWidget::resizeGL(int w, int h){
 
 	glEnable(GL_LIGHTING); // enable lighting in general
   glEnable(GL_LIGHT0);   // each light source must also be enabled
+  glEnable(GL_TEXTURE_2D);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -185,6 +186,21 @@ void SceneWidget::gravestone(){
   glEnable(GL_LIGHTING);
 }
 
+void SceneWidget::map(){
+  // GLfloat normal = {};
+
+  materialStruct* material = &goldMaterials;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  glRectf(-1.5, -1, 1.5, 1);
+
+  glEnable(GL_LIGHTING);
+}
+
 void SceneWidget::ghost(){
   materialStruct* material = &white;
 
@@ -196,18 +212,28 @@ void SceneWidget::ghost(){
   float radius = 1;
   GLUquadric *head = gluNewQuadric();
   gluQuadricDrawStyle(head, GLU_FILL);
+  // glBindTexture(GL_TEXTURE_2D, marc);
   gluQuadricTexture(head, GL_TRUE);
   // glutSolidSphere(radius, 10, 10);
+  // glRasterPos2i(0,0);
+  // glDrawPixels(marc.Width(),marc.Height(),GL_RGB, GL_UNSIGNED_BYTE,marc.imageField());
   gluSphere(head, radius, 10, 10);
-  glRasterPos2i(0,0);
-  glDrawPixels(marc.Width(),marc.Height(),GL_RGB, GL_UNSIGNED_BYTE,marc.imageField());
+  gluDeleteQuadric(head);
 
+  glPushMatrix();
   glTranslatef(0, -2 * radius, 0);
 
   GLUquadric *body = gluNewQuadric();
   // glutSolidIcosahedron();
   glRotatef(90, 1, 0, 0);
-  gluCylinder(body, radius, radius, 5, 10, 10);
+  gluCylinder(body, radius, radius, 3, 10, 10);
+  gluDeleteQuadric(body);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0, -2 * radius, -2 * radius);
+  this->map();
+  glPopMatrix();
 
   glEnable(GL_LIGHTING);
 }

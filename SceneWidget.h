@@ -29,6 +29,7 @@ class SceneWidget: public QGLWidget{
 	void cube(bool shadow=false);
 	void floor();
 	void gravestone();
+	void map();
 	void ghost();
 	void fog();
 
