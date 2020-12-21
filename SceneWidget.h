@@ -39,6 +39,7 @@ class SceneWidget: public QGLWidget{
 	float opacity;
 
 	Image marc;
+	Image world;
 
 	QImage* fogTexture;
 	unsigned int fogTextureWidth;

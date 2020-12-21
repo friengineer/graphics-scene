@@ -56,11 +56,11 @@ static materialStruct white = {
 };
 
 // constructor
-SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent), _angle(0.0), opacity(0.5), marc("Marc_Dekamps.ppm"){
-  const std::string& fogFile = "fog-overlay-free.jpg";
-  fogTexture = new QImage(QString(fogFile.c_str()));
-  fogTextureWidth = fogTexture->width();
-  fogTextureHeight = fogTexture->height();
+SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent), _angle(0.0), opacity(0.5), marc("Marc_Dekamps.ppm"), world("Mercator-projection.ppm"){
+  // const std::string& fogFile = "fog-overlay-free.jpg";
+  // fogTexture = new QImage(QString(fogFile.c_str()));
+  // fogTextureWidth = fogTexture->width();
+  // fogTextureHeight = fogTexture->height();
 }
 
 void SceneWidget::initializeGL(){
@@ -81,12 +81,24 @@ void SceneWidget::resizeGL(int w, int h){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+  // glActiveTexture(GL_TEXTURE0);
+  // glBindTexture(GL_TEXTURE_2D, marc.imageField());
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
 
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  // glActiveTexture(GL_TEXTURE1);
+  // glBindTexture(GL_TEXTURE_2D, world.imageField());
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
+  //
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -114,7 +126,7 @@ void SceneWidget::floor(){
 }
 
 void SceneWidget::gravestone(){
-  GLfloat normals[][3] = { {1., 0. ,0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
+  GLfloat normals[][3] = { {1., 0., 0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
 
   // if (b_shadow == true){
   //       glDisable(GL_LIGHTING);
@@ -187,7 +199,19 @@ void SceneWidget::gravestone(){
 }
 
 void SceneWidget::map(){
-  // GLfloat normal = {};
+  // GLuint earth;
+  // glGenTextures(1, &earth);
+  // glActiveTexture(GL_TEXTURE1);
+  // glBindTexture(GL_TEXTURE_2D, earth);
+  //
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
+  //
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  GLfloat normal[] = {1, 0, 0};
 
   materialStruct* material = &goldMaterials;
 
@@ -196,12 +220,36 @@ void SceneWidget::map(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
-  glRectf(-1.5, -1, 1.5, 1);
+  glNormal3fv(normal);
+  glBegin(GL_POLYGON);
+  glTexCoord2f(0.0, 0.0);
+  glVertex3f(-1.5, -1, 0);
+  glTexCoord2f(1.0, 0.0);
+  glVertex3f( 1.5, -1, 0);
+  glTexCoord2f(1.0, 1.0);
+  glVertex3f( 1.5,  1, 0);
+  glTexCoord2f(0.0, 1.0);
+  glVertex3f(-1.5,  1, 0);
+  glEnd();
+
+  // glRectf(-1.5, -1, 1.5, 1);
 
   glEnable(GL_LIGHTING);
 }
 
 void SceneWidget::ghost(){
+  // GLuint face;
+  // glGenTextures(1, &face);
+  // glActiveTexture(GL_TEXTURE0);
+  // glBindTexture(GL_TEXTURE_2D, face);
+  //
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
+  //
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
   materialStruct* material = &white;
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
@@ -217,7 +265,11 @@ void SceneWidget::ghost(){
   // glutSolidSphere(radius, 10, 10);
   // glRasterPos2i(0,0);
   // glDrawPixels(marc.Width(),marc.Height(),GL_RGB, GL_UNSIGNED_BYTE,marc.imageField());
+  glPushMatrix();
+  glRotatef(-90, 1, 0, 0);
+  glRotatef(90, 0, 0, 1);
   gluSphere(head, radius, 10, 10);
+  glPopMatrix();
   gluDeleteQuadric(head);
 
   glPushMatrix();
@@ -231,7 +283,8 @@ void SceneWidget::ghost(){
   glPopMatrix();
 
   glPushMatrix();
-  glTranslatef(0, -2 * radius, -2 * radius);
+  glTranslatef(2 * radius, -2 * radius, 0);
+  glRotatef(-90, 0, 1, 0);
   this->map();
   glPopMatrix();
 
@@ -246,7 +299,7 @@ void SceneWidget::fog(){
     0
   };
 
-  GLfloat normals[][3] = { {1., 0. ,0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
+  GLfloat normals[][3] = { {1., 0., 0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
 
   materialStruct* material = &grey;
 
@@ -309,7 +362,7 @@ void SceneWidget::fog(){
 
 void SceneWidget::cube(bool b_shadow){
   // normals of the cube faces
-  GLfloat normals[][3] = { {1., 0. ,0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
+  GLfloat normals[][3] = { {1., 0., 0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
 
   if (b_shadow == true){
         glDisable(GL_LIGHTING);
@@ -417,6 +470,7 @@ void SceneWidget::paintGL(){
 
   // You must set the matrix mode to model view directly before enabling the depth test
   glMatrixMode(GL_MODELVIEW);
+  // glLoadIdentity();
 
   glPushMatrix();
   glTranslatef(-9, 0, 4);
@@ -470,7 +524,7 @@ void SceneWidget::paintGL(){
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   this->fog();
 
-	glLoadIdentity();
+  glLoadIdentity();
   gluLookAt(1.,1.,1., 0.0,0.0,0.0, 0.0,1.0,0.0);
 
 	// flush to screen
