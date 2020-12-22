@@ -83,20 +83,21 @@ void SceneWidget::resizeGL(int w, int h){
 
   // glActiveTexture(GL_TEXTURE0);
   // glBindTexture(GL_TEXTURE_2D, marc.imageField());
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
+
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
   // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
 
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   // glActiveTexture(GL_TEXTURE1);
   // glBindTexture(GL_TEXTURE_2D, world.imageField());
   // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
   //
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -203,13 +204,6 @@ void SceneWidget::map(){
   // glGenTextures(1, &earth);
   // glActiveTexture(GL_TEXTURE1);
   // glBindTexture(GL_TEXTURE_2D, earth);
-  //
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
-  //
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   GLfloat normal[] = {1, 0, 0};
 
@@ -232,7 +226,14 @@ void SceneWidget::map(){
   glVertex3f(-1.5,  1, 0);
   glEnd();
 
-  // glRectf(-1.5, -1, 1.5, 1);
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
+
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  // //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
 
   glEnable(GL_LIGHTING);
 }
@@ -272,6 +273,13 @@ void SceneWidget::ghost(){
   glPopMatrix();
   gluDeleteQuadric(head);
 
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
+
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
   glPushMatrix();
   glTranslatef(0, -2 * radius, 0);
 
@@ -279,8 +287,8 @@ void SceneWidget::ghost(){
   // glutSolidIcosahedron();
   glRotatef(90, 1, 0, 0);
   gluCylinder(body, radius, radius, 3, 10, 10);
-  gluDeleteQuadric(body);
   glPopMatrix();
+  gluDeleteQuadric(body);
 
   glPushMatrix();
   glTranslatef(2 * radius, -2 * radius, 0);
@@ -498,6 +506,7 @@ void SceneWidget::paintGL(){
   glRotatef(-_angle, 0, 1, 0);
   glTranslatef(0, 10, -7);
   this->ghost();
+  // this->map();
   glPopMatrix();
 
 	// glPushMatrix();
