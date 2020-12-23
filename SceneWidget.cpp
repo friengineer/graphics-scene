@@ -81,26 +81,6 @@ void SceneWidget::resizeGL(int w, int h){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-  // glActiveTexture(GL_TEXTURE0);
-  // glBindTexture(GL_TEXTURE_2D, marc.imageField());
-
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
-
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-  // glActiveTexture(GL_TEXTURE1);
-  // glBindTexture(GL_TEXTURE_2D, world.imageField());
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
-  //
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-15.0, 15.0, -15.0, 15.0, -15.0, 15.0);
@@ -200,11 +180,6 @@ void SceneWidget::gravestone(){
 }
 
 void SceneWidget::map(){
-  // GLuint earth;
-  // glGenTextures(1, &earth);
-  // glActiveTexture(GL_TEXTURE1);
-  // glBindTexture(GL_TEXTURE_2D, earth);
-
   GLfloat normal[] = {1, 0, 0};
 
   materialStruct* material = &goldMaterials;
@@ -213,6 +188,17 @@ void SceneWidget::map(){
   glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  GLuint earth;
+  glGenTextures(1, &earth);
+  glBindTexture(GL_TEXTURE_2D, earth);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
+
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   glNormal3fv(normal);
   glBegin(GL_POLYGON);
@@ -226,31 +212,12 @@ void SceneWidget::map(){
   glVertex3f(-1.5,  1, 0);
   glEnd();
 
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
-
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  // //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   glEnable(GL_LIGHTING);
 }
 
 void SceneWidget::ghost(){
-  // GLuint face;
-  // glGenTextures(1, &face);
-  // glActiveTexture(GL_TEXTURE0);
-  // glBindTexture(GL_TEXTURE_2D, face);
-  //
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
-  //
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
   materialStruct* material = &white;
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
@@ -258,21 +225,9 @@ void SceneWidget::ghost(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
-  float radius = 1;
-  GLUquadric *head = gluNewQuadric();
-  gluQuadricDrawStyle(head, GLU_FILL);
-  // glBindTexture(GL_TEXTURE_2D, marc);
-  gluQuadricTexture(head, GL_TRUE);
-  // glutSolidSphere(radius, 10, 10);
-  // glRasterPos2i(0,0);
-  // glDrawPixels(marc.Width(),marc.Height(),GL_RGB, GL_UNSIGNED_BYTE,marc.imageField());
-  glPushMatrix();
-  glRotatef(-90, 1, 0, 0);
-  glRotatef(90, 0, 0, 1);
-  gluSphere(head, radius, 10, 10);
-  glPopMatrix();
-  gluDeleteQuadric(head);
-
+  // GLuint face;
+  // glGenTextures(1, &face);
+  // glBindTexture(GL_TEXTURE_2D, face);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
 
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -280,11 +235,22 @@ void SceneWidget::ghost(){
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+  float radius = 1;
+  GLUquadric *head = gluNewQuadric();
+  gluQuadricDrawStyle(head, GLU_FILL);
+  gluQuadricTexture(head, GL_TRUE);
+
+  glPushMatrix();
+  glRotatef(-90, 1, 0, 0);
+  glRotatef(90, 0, 0, 1);
+  gluSphere(head, radius, 10, 10);
+  glPopMatrix();
+  gluDeleteQuadric(head);
+
   glPushMatrix();
   glTranslatef(0, -2 * radius, 0);
 
   GLUquadric *body = gluNewQuadric();
-  // glutSolidIcosahedron();
   glRotatef(90, 1, 0, 0);
   gluCylinder(body, radius, radius, 3, 10, 10);
   glPopMatrix();
@@ -506,7 +472,6 @@ void SceneWidget::paintGL(){
   glRotatef(-_angle, 0, 1, 0);
   glTranslatef(0, 10, -7);
   this->ghost();
-  // this->map();
   glPopMatrix();
 
 	// glPushMatrix();
