@@ -56,7 +56,13 @@ static materialStruct white = {
 };
 
 // constructor
-SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent), _angle(0.0), opacity(0.5), marc("Marc_Dekamps.ppm"), world("Mercator-projection.ppm"){
+SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent),
+  _angle(0.0),
+  direction(-1),
+  speed(1),
+  opacity(0.5),
+  marc("Marc_Dekamps.ppm"),
+  world("Mercator-projection.ppm"){
   // const std::string& fogFile = "fog-overlay-free.jpg";
   // fogTexture = new QImage(QString(fogFile.c_str()));
   // fogTextureWidth = fogTexture->width();
@@ -182,12 +188,19 @@ void SceneWidget::gravestone(){
 void SceneWidget::map(){
   GLfloat normal[] = {1, 0, 0};
 
-  materialStruct* material = &goldMaterials;
+  materialStruct* material = &white;
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  // material = &goldMaterials;
+  //
+  // glMaterialfv(GL_BACK, GL_AMBIENT, material->ambient);
+  // glMaterialfv(GL_BACK, GL_DIFFUSE, material->diffuse);
+  // glMaterialfv(GL_BACK, GL_SPECULAR, material->specular);
+  // glMaterialf(GL_BACK, GL_SHININESS, material->shininess);
 
   GLuint earth;
   glGenTextures(1, &earth);
@@ -243,6 +256,7 @@ void SceneWidget::ghost(){
   glPushMatrix();
   glRotatef(-90, 1, 0, 0);
   glRotatef(90, 0, 0, 1);
+  glRotatef(2 * _angle, 0, 0, 1);
   gluSphere(head, radius, 10, 10);
   glPopMatrix();
   gluDeleteQuadric(head);
@@ -257,8 +271,9 @@ void SceneWidget::ghost(){
   gluDeleteQuadric(body);
 
   glPushMatrix();
-  glTranslatef(2 * radius, -2 * radius, 0);
-  glRotatef(-90, 0, 1, 0);
+  glTranslatef(direction * -2 * radius, -2 * radius, 0);
+  glRotatef(direction * 90, 0, 1, 0);
+  // glRotatef(-_angle, 0, 0, 1);
   this->map();
   glPopMatrix();
 
@@ -407,8 +422,16 @@ void SceneWidget::cube(bool b_shadow){
 }
 
 void SceneWidget::updateAngle(){
-  _angle += 1.0;
+  _angle += speed;
   this->repaint();
+}
+
+void SceneWidget::changeDirection(){
+  direction *= -1;
+}
+
+void SceneWidget::updateSpeed(int value){
+  speed = (float) value/10;
 }
 
 void SceneWidget::updateTransparency(int value){
@@ -469,7 +492,7 @@ void SceneWidget::paintGL(){
   glPopMatrix();
 
   glPushMatrix();
-  glRotatef(-_angle, 0, 1, 0);
+  glRotatef(direction * _angle, 0, 1, 0);
   glTranslatef(0, 10, -7);
   this->ghost();
   glPopMatrix();

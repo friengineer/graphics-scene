@@ -14,6 +14,8 @@ class SceneWidget: public QGLWidget{
 	public slots:
   // called by the timer in the main window
 	void updateAngle();
+	void changeDirection();
+	void updateSpeed(int value);
 	void updateTransparency(int value);
 
 	protected:
@@ -36,6 +38,8 @@ class SceneWidget: public QGLWidget{
 	void polygon(int, int, int, int);
 
 	double _angle;
+	float direction;
+	float speed;
 	float opacity;
 
 	Image marc;

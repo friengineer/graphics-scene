@@ -21,12 +21,25 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	windowLayout->addWidget(sceneWidget);
 	windowLayout->addWidget(controlsWidget);
 
+	QLabel *transparencyText = new QLabel(tr("Transparency level of fog"));
+	controlsLayout->addWidget(transparencyText);
+
 	transparencySlider = new QSlider(Qt::Horizontal);
 	transparencySlider->setValue(50);
+	transparencySlider->setTickPosition(QSlider::TicksBelow);
 	// windowLayout->addWidget(transparencySlider);
 	controlsLayout->addWidget(transparencySlider);
 
+	directionButton = new QPushButton(tr("Change direction of ghost"));
+	controlsLayout->addWidget(directionButton);
+
+	QLabel *speedText = new QLabel(tr("Speed of ghost"));
+	controlsLayout->addWidget(speedText);
+
 	speedDial = new QDial;
+	speedDial->setRange(10, 60);
+	speedDial->setValue(10);
+	speedDial->setNotchesVisible(true);
 	// windowLayout->addWidget(speedDial);
 	controlsLayout->addWidget(speedDial);
 
@@ -35,7 +48,9 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	ptimer = new QTimer(this);
 	ptimer->start(20);
 
-	connect(transparencySlider, SIGNAL(sliderMoved(int)), sceneWidget, SLOT(updateTransparency(int)));
+	connect(transparencySlider, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateTransparency(int)));
+	connect(directionButton, SIGNAL(clicked()), sceneWidget, SLOT(changeDirection()));
+	connect(speedDial, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateSpeed(int)));
 	connect(ptimer, SIGNAL(timeout()), sceneWidget, SLOT(updateAngle()));
 }
 
@@ -43,7 +58,10 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 SceneWindow::~SceneWindow(){
 	delete ptimer;
 	delete speedDial;
+	// delete speedText;
+	delete directionButton;
 	delete transparencySlider;
+	// delete transparencyText;
 	delete controlsWidget;
 	delete sceneWidget;
 	delete controlsLayout;
@@ -58,12 +76,8 @@ void SceneWindow::ResetInterface(){
 	transparencySlider->setMinimum(0);
 	transparencySlider->setMaximum(100);
 
-	speedDial->setMinimum(1);
+	speedDial->setMinimum(10);
 	speedDial->setMaximum(60);
-
-	//don't use the slider for now
-
-	//	nVerticesSlider->setValue(thePolygon->nVertices);
 
 	// now force refresh
 	controlsWidget->update();
