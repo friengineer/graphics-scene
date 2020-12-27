@@ -61,6 +61,9 @@ SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent),
   direction(-1),
   speed(1),
   opacity(0.5),
+  xView(1),
+  yView(1),
+  zView(1),
   marc("Marc_Dekamps.ppm"),
   world("Mercator-projection.ppm"){
   // const std::string& fogFile = "fog-overlay-free.jpg";
@@ -226,6 +229,7 @@ void SceneWidget::map(){
   glEnd();
 
   glBindTexture(GL_TEXTURE_2D, 0);
+  glDeleteTextures(1, &earth);
 
   glEnable(GL_LIGHTING);
 }
@@ -238,9 +242,9 @@ void SceneWidget::ghost(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
-  // GLuint face;
-  // glGenTextures(1, &face);
-  // glBindTexture(GL_TEXTURE_2D, face);
+  GLuint face;
+  glGenTextures(1, &face);
+  glBindTexture(GL_TEXTURE_2D, face);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
 
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -249,17 +253,21 @@ void SceneWidget::ghost(){
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   float radius = 1;
+
+  glPushMatrix();
   GLUquadric *head = gluNewQuadric();
   gluQuadricDrawStyle(head, GLU_FILL);
   gluQuadricTexture(head, GL_TRUE);
 
-  glPushMatrix();
   glRotatef(-90, 1, 0, 0);
   glRotatef(90, 0, 0, 1);
   glRotatef(2 * _angle, 0, 0, 1);
   gluSphere(head, radius, 10, 10);
-  glPopMatrix();
   gluDeleteQuadric(head);
+  glPopMatrix();
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glDeleteTextures(1, &face);
 
   glPushMatrix();
   glTranslatef(0, -2 * radius, 0);
@@ -267,13 +275,13 @@ void SceneWidget::ghost(){
   GLUquadric *body = gluNewQuadric();
   glRotatef(90, 1, 0, 0);
   gluCylinder(body, radius, radius, 3, 10, 10);
-  glPopMatrix();
   gluDeleteQuadric(body);
+  glPopMatrix();
 
   glPushMatrix();
   glTranslatef(direction * -2 * radius, -2 * radius, 0);
   glRotatef(direction * 90, 0, 1, 0);
-  // glRotatef(-_angle, 0, 0, 1);
+  glRotatef(-_angle, 0, 0, 1);
   this->map();
   glPopMatrix();
 
@@ -439,6 +447,23 @@ void SceneWidget::updateTransparency(int value){
   this->repaint();
 }
 
+void SceneWidget::updateHorizontalView(int value){
+  xView = (float) value/100;
+  this->repaint();
+}
+
+void SceneWidget::updateVerticalView(int value){
+  yView = (float) value/100;
+
+  // if (xView > 0){
+  //   xView = 2 - yView;
+  // } else if (xView < 0) {
+  //   xView = yView - 2;
+  // }
+
+  this->repaint();
+}
+
 // called every time the widget needs painting
 void SceneWidget::paintGL(){
 	// clear the widget
@@ -522,7 +547,8 @@ void SceneWidget::paintGL(){
   this->fog();
 
   glLoadIdentity();
-  gluLookAt(1.,1.,1., 0.0,0.0,0.0, 0.0,1.0,0.0);
+  gluLookAt(xView,yView,zView, 0.0,0.0,0.0, 0.0,1.0,0.0);
+  // gluLookAt(0.1,1.9,0.1, 0.0,0.0,0.0, 0.0,1.0,0.0);
 
 	// flush to screen
 	glFlush();

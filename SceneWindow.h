@@ -25,9 +25,11 @@ class SceneWindow: public QWidget{
 	QBoxLayout *controlsLayout;
 	SceneWidget *sceneWidget;
 	QWidget *controlsWidget;
+	QSlider *transparencySlider;
 	QPushButton *directionButton;
 	QDial *speedDial;
-	QSlider *transparencySlider;
+	QSlider *xViewSlider;
+	QSlider *yViewSlider;
 
 	QTimer *ptimer;
 

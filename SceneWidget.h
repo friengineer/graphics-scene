@@ -17,6 +17,8 @@ class SceneWidget: public QGLWidget{
 	void changeDirection();
 	void updateSpeed(int value);
 	void updateTransparency(int value);
+	void updateHorizontalView(int value);
+	void updateVerticalView(int value);
 
 	protected:
 	// called when OpenGL context is set up
@@ -41,6 +43,9 @@ class SceneWidget: public QGLWidget{
 	float direction;
 	float speed;
 	float opacity;
+	double xView;
+	double yView;
+	double zView;
 
 	Image marc;
 	Image world;

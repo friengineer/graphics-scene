@@ -11,7 +11,7 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	// windowLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
 	windowLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 	// need to create separate control widget
-	controlsLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+	controlsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
 	sceneWidget = new SceneWidget(this);
 	controlsWidget = new QWidget(this);
@@ -27,7 +27,6 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	transparencySlider = new QSlider(Qt::Horizontal);
 	transparencySlider->setValue(50);
 	transparencySlider->setTickPosition(QSlider::TicksBelow);
-	// windowLayout->addWidget(transparencySlider);
 	controlsLayout->addWidget(transparencySlider);
 
 	directionButton = new QPushButton(tr("Change direction of ghost"));
@@ -40,10 +39,25 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	speedDial->setRange(10, 60);
 	speedDial->setValue(10);
 	speedDial->setNotchesVisible(true);
-	// windowLayout->addWidget(speedDial);
 	controlsLayout->addWidget(speedDial);
 
-	// windowLayout->addLayout(controlsLayout);
+	QLabel *horizontalText = new QLabel(tr("Horizontal view"));
+	controlsLayout->addWidget(horizontalText);
+
+	xViewSlider = new QSlider(Qt::Horizontal);
+	xViewSlider->setRange(-100, 100);
+	xViewSlider->setValue(0);
+	xViewSlider->setTickPosition(QSlider::TicksBelow);
+	controlsLayout->addWidget(xViewSlider);
+
+	QLabel *verticalText = new QLabel(tr("Vertical view"));
+	controlsLayout->addWidget(verticalText);
+
+	yViewSlider = new QSlider(Qt::Horizontal);
+	yViewSlider->setRange(1, 199);
+	yViewSlider->setValue(100);
+	yViewSlider->setTickPosition(QSlider::TicksBelow);
+	controlsLayout->addWidget(yViewSlider);
 
 	ptimer = new QTimer(this);
 	ptimer->start(20);
@@ -51,12 +65,16 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	connect(transparencySlider, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateTransparency(int)));
 	connect(directionButton, SIGNAL(clicked()), sceneWidget, SLOT(changeDirection()));
 	connect(speedDial, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateSpeed(int)));
+	connect(xViewSlider, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateHorizontalView(int)));
+	connect(yViewSlider, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateVerticalView(int)));
 	connect(ptimer, SIGNAL(timeout()), sceneWidget, SLOT(updateAngle()));
 }
 
 // destructor
 SceneWindow::~SceneWindow(){
 	delete ptimer;
+	delete yViewSlider;
+	delete xViewSlider;
 	delete speedDial;
 	// delete speedText;
 	delete directionButton;
@@ -78,6 +96,12 @@ void SceneWindow::ResetInterface(){
 
 	speedDial->setMinimum(10);
 	speedDial->setMaximum(60);
+
+	xViewSlider->setMinimum(-100);
+	xViewSlider->setMaximum(100);
+
+	yViewSlider->setMinimum(1);
+	yViewSlider->setMaximum(199);
 
 	// now force refresh
 	controlsWidget->update();
