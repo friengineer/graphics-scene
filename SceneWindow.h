@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QDial>
 #include <QSlider>
+#include <QDoubleSpinBox>
 #include <QTimer>
 #include <QBoxLayout>
 #include "SceneWidget.h"
@@ -30,6 +31,9 @@ class SceneWindow: public QWidget{
 	QDial *speedDial;
 	QSlider *xViewSlider;
 	QSlider *yViewSlider;
+	QDoubleSpinBox *redBox;
+	QDoubleSpinBox *greenBox;
+	QDoubleSpinBox *blueBox;
 
 	QTimer *ptimer;
 

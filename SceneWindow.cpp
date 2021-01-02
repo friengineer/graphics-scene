@@ -59,6 +59,36 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	yViewSlider->setTickPosition(QSlider::TicksBelow);
 	controlsLayout->addWidget(yViewSlider);
 
+	QLabel *gravestoneText = new QLabel(tr("Gravestone colour"));
+	controlsLayout->addWidget(gravestoneText);
+
+	QLabel *redText = new QLabel(tr("Red"));
+	controlsLayout->addWidget(redText);
+
+	redBox = new QDoubleSpinBox;
+	redBox->setRange(0, 1);
+	redBox->setSingleStep(0.1);
+	redBox->setValue(0.2);
+	controlsLayout->addWidget(redBox);
+
+	QLabel *greenText = new QLabel(tr("Green"));
+	controlsLayout->addWidget(greenText);
+
+	greenBox = new QDoubleSpinBox;
+	greenBox->setRange(0, 1);
+	greenBox->setSingleStep(0.1);
+	greenBox->setValue(0.2);
+	controlsLayout->addWidget(greenBox);
+
+	QLabel *blueText = new QLabel(tr("Blue"));
+	controlsLayout->addWidget(blueText);
+
+	blueBox = new QDoubleSpinBox;
+	blueBox->setRange(0, 1);
+	blueBox->setSingleStep(0.1);
+	blueBox->setValue(0.2);
+	controlsLayout->addWidget(blueBox);
+
 	ptimer = new QTimer(this);
 	ptimer->start(20);
 
@@ -67,12 +97,18 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	connect(speedDial, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateSpeed(int)));
 	connect(xViewSlider, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateHorizontalView(int)));
 	connect(yViewSlider, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateVerticalView(int)));
+	connect(redBox, SIGNAL(valueChanged(double)), sceneWidget, SLOT(updateRed(double)));
+	connect(greenBox, SIGNAL(valueChanged(double)), sceneWidget, SLOT(updateGreen(double)));
+	connect(blueBox, SIGNAL(valueChanged(double)), sceneWidget, SLOT(updateBlue(double)));
 	connect(ptimer, SIGNAL(timeout()), sceneWidget, SLOT(updateAngle()));
 }
 
 // destructor
 SceneWindow::~SceneWindow(){
 	delete ptimer;
+	delete blueBox;
+	delete greenBox;
+	delete redBox;
 	delete yViewSlider;
 	delete xViewSlider;
 	delete speedDial;

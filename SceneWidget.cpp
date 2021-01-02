@@ -48,11 +48,25 @@ static materialStruct green = {
   0
 };
 
+static materialStruct black = {
+  { 0, 0, 0, 1.0},
+  { 0, 0, 0, 1.0},
+  { 0, 0, 0, 1.0},
+  0
+};
+
 static materialStruct white = {
   { 1, 1, 1, 1.0},
   { 1, 1, 1, 1.0},
   { 0, 0, 0, 1.0},
   0
+};
+
+materialStruct graveMaterial = {
+  { 0.2, 0.2, 0.2, 1},
+  { 0.2, 0.2, 0.2, 1},
+  { 0.8, 0.6, 0.6, 1},
+  32
 };
 
 // constructor
@@ -115,6 +129,52 @@ void SceneWidget::floor(){
   glEnd();
 }
 
+void SceneWidget::openGrave(){
+  materialStruct* material = &graveMaterial;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  glPushMatrix();
+  glTranslatef(0, 1, 4);
+  glScalef(5, 3, 0.5);
+  glutSolidCube(1);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0, 1, -4);
+  glScalef(5, 3, 0.5);
+  glutSolidCube(1);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(2.25, 1, 0);
+  glScalef(0.5, 3, 8);
+  glutSolidCube(1);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(-2.25, 1, 0);
+  glScalef(0.5, 3, 8);
+  glutSolidCube(1);
+  glPopMatrix();
+
+  material = &black;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  glPushMatrix();
+  glTranslatef(0, 1.1, 0);
+  glScalef(5, 0, 8);
+  glutSolidCube(1);
+  glPopMatrix();
+}
+
 void SceneWidget::gravestone(){
   GLfloat normals[][3] = { {1., 0., 0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
 
@@ -123,14 +183,12 @@ void SceneWidget::gravestone(){
   //       glColor3f(0.,0.,0.);
   // }
 
-  materialStruct* material = &redPlasticMaterials;
+  materialStruct* material = &graveMaterial;
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
-
-
 
   glNormal3fv(normals[0]);
   glBegin(GL_POLYGON);
@@ -464,6 +522,21 @@ void SceneWidget::updateVerticalView(int value){
   this->repaint();
 }
 
+void SceneWidget::updateRed(double value){
+  graveMaterial.ambient[0] = value;
+  graveMaterial.diffuse[0] = value;
+}
+
+void SceneWidget::updateGreen(double value){
+  graveMaterial.ambient[1] = value;
+  graveMaterial.diffuse[1] = value;
+}
+
+void SceneWidget::updateBlue(double value){
+  graveMaterial.ambient[2] = value;
+  graveMaterial.diffuse[2] = value;
+}
+
 // called every time the widget needs painting
 void SceneWidget::paintGL(){
 	// clear the widget
@@ -474,7 +547,8 @@ void SceneWidget::paintGL(){
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	GLfloat light_pos[] = {1.5, 7, 1., 1.};
+	// GLfloat light_pos[] = {1.5, 7, 1., 1.};
+  GLfloat light_pos[] = {0, 10, 0, 1.};
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 	glLightf (GL_LIGHT0, GL_SPOT_CUTOFF,180.);
 
@@ -493,6 +567,8 @@ void SceneWidget::paintGL(){
   // You must set the matrix mode to model view directly before enabling the depth test
   glMatrixMode(GL_MODELVIEW);
   // glLoadIdentity();
+
+  this->openGrave();
 
   glPushMatrix();
   glTranslatef(-9, 0, 4);

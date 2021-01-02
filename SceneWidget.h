@@ -19,6 +19,9 @@ class SceneWidget: public QGLWidget{
 	void updateTransparency(int value);
 	void updateHorizontalView(int value);
 	void updateVerticalView(int value);
+	void updateRed(double);
+	void updateGreen(double);
+	void updateBlue(double);
 
 	protected:
 	// called when OpenGL context is set up
@@ -32,6 +35,7 @@ class SceneWidget: public QGLWidget{
 
 	void cube(bool shadow=false);
 	void floor();
+	void openGrave();
 	void gravestone();
 	void map();
 	void ghost();
