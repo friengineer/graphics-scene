@@ -33,10 +33,10 @@ class SceneWidget: public QGLWidget{
 
 	private:
 
-	void cube(bool shadow=false);
 	void floor();
 	void openGrave();
 	void gravestone();
+	void crossGravestone();
 	void map();
 	void ghost();
 	void fog();
@@ -46,7 +46,6 @@ class SceneWidget: public QGLWidget{
 	double _angle;
 	float direction;
 	float speed;
-	float opacity;
 	double xView;
 	double yView;
 	double zView;

@@ -69,12 +69,18 @@ materialStruct graveMaterial = {
   32
 };
 
+materialStruct grey = {
+  { 1, 1, 1, 0.5},
+  { 0, 0, 0, 0.5},
+  { 0, 0, 0, 0.5},
+  0
+};
+
 // constructor
 SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent),
   _angle(0.0),
   direction(-1),
   speed(1),
-  opacity(0.5),
   xView(1),
   yView(1),
   zView(1),
@@ -161,6 +167,27 @@ void SceneWidget::openGrave(){
   glutSolidCube(1);
   glPopMatrix();
 
+  glPushMatrix();
+  glTranslatef(0, 0, -6);
+  glRotatef(-90, 1, 0, 0);
+  glutSolidCone(1, 8, 10, 10);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0, 2.5, -1.5);
+  glRotatef(45, 0, 1, 0);
+  glScalef(5, 0.5, 8);
+  glutSolidCube(1);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0, 8, -6);
+  GLUquadric *head = gluNewQuadric();
+  gluQuadricDrawStyle(head, GLU_FILL);
+  gluSphere(head, 1, 10, 10);
+  gluDeleteQuadric(head);
+  glPopMatrix();
+
   material = &black;
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
@@ -178,11 +205,6 @@ void SceneWidget::openGrave(){
 void SceneWidget::gravestone(){
   GLfloat normals[][3] = { {1., 0., 0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
 
-  // if (b_shadow == true){
-  //       glDisable(GL_LIGHTING);
-  //       glColor3f(0.,0.,0.);
-  // }
-
   materialStruct* material = &graveMaterial;
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
@@ -197,11 +219,6 @@ void SceneWidget::gravestone(){
   glVertex3f(0.75, 4, -0.25);
   glVertex3f(0.75, 4, 0.25);
   glEnd();
-
-  // glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
-  // glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
-  // glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
-  // glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
   glNormal3fv(normals[3]);
   glBegin(GL_POLYGON);
@@ -244,6 +261,27 @@ void SceneWidget::gravestone(){
   glEnd();
 
   glEnable(GL_LIGHTING);
+}
+
+void SceneWidget::crossGravestone(){
+  materialStruct* material = &graveMaterial;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  glPushMatrix();
+  glTranslatef(0, 2, 0);
+  glScalef(0.5, 4, 0.5);
+  glutSolidCube(1);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0, 2.5, 0);
+  glScalef(1.5, 1, 0.5);
+  glutSolidCube(1);
+  glPopMatrix();
 }
 
 void SceneWidget::map(){
@@ -347,13 +385,6 @@ void SceneWidget::ghost(){
 }
 
 void SceneWidget::fog(){
-  materialStruct grey = {
-    { 1, 1, 1, opacity},
-    { 0, 0, 0, opacity},
-    { 0, 0, 0, opacity},
-    0
-  };
-
   GLfloat normals[][3] = { {1., 0., 0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
 
   materialStruct* material = &grey;
@@ -364,7 +395,6 @@ void SceneWidget::fog(){
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
   glNormal3fv(normals[0]);
-  // glColor3f(0.2, 0.2, 0.2);
   glBegin(GL_POLYGON);
   glVertex3f(10, 0, 10);
   glVertex3f(10, 0, -10);
@@ -410,78 +440,6 @@ void SceneWidget::fog(){
   glVertex3f(10, 0, -10);
   glVertex3f(-10, 0, -10);
   glVertex3f(-10, 0, 10);
-  glEnd();
-
-  glEnable(GL_LIGHTING);
-}
-
-void SceneWidget::cube(bool b_shadow){
-  // normals of the cube faces
-  GLfloat normals[][3] = { {1., 0., 0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
-
-  if (b_shadow == true){
-        glDisable(GL_LIGHTING);
-        glColor3f(0.,0.,0.);
-  }
-
-  materialStruct* material = &goldMaterials;
-
-  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
-
-  glNormal3fv(normals[0]);
-  glBegin(GL_POLYGON);
-  glVertex3f( 1.0, -1.0,  1.0);
-  glVertex3f( 1.0, -1.0, -1.0);
-  glVertex3f( 1.0,  1.0, -1.0);
-  glVertex3f( 1.0,  1.0,  1.0);
-  glEnd();
-
-  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
-  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
-
-  glNormal3fv(normals[3]);
-  glBegin(GL_POLYGON);
-  glVertex3f(-1.0, -1.0, -1.0);
-  glVertex3f( 1.0, -1.0, -1.0);
-  glVertex3f( 1.0,  1.0, -1.0);
-  glVertex3f(-1.0,  1.0, -1.0);
-  glEnd();
-
-  glNormal3fv(normals[2]);
-  glBegin(GL_POLYGON);
-  glVertex3f(-1.0, -1.0, 1.0);
-  glVertex3f( 1.0, -1.0, 1.0);
-  glVertex3f( 1.0,  1.0, 1.0);
-  glVertex3f(-1.0,  1.0, 1.0);
-  glEnd();
-
-  glNormal3fv(normals[1]);
-  glBegin(GL_POLYGON);
-  glVertex3f( -1.0, -1.0,  1.0);
-  glVertex3f( -1.0, -1.0, -1.0);
-  glVertex3f( -1.0,  1.0, -1.0);
-  glVertex3f( -1.0,  1.0,  1.0);
-  glEnd();
-
-  glNormal3fv(normals[4]);
-  glBegin(GL_POLYGON);
-  glVertex3f(  1.0,  1.0,  1.0);
-  glVertex3f(  1.0,  1.0, -1.0);
-  glVertex3f( -1.0,  1.0, -1.0);
-  glVertex3f( -1.0,  1.0,  1.0);
-  glEnd();
-
-  glNormal3fv(normals[5]);
-  glBegin(GL_POLYGON);
-  glVertex3f(  1.0,  -1.0,  1.0);
-  glVertex3f(  1.0,  -1.0, -1.0);
-  glVertex3f( -1.0,  -1.0, -1.0);
-  glVertex3f( -1.0,  -1.0,  1.0);
   glEnd();
 
   glEnable(GL_LIGHTING);
@@ -501,7 +459,9 @@ void SceneWidget::updateSpeed(int value){
 }
 
 void SceneWidget::updateTransparency(int value){
-  opacity = (float) value/100;
+  grey.ambient[3] = (float) value/100;
+  grey.diffuse[3] = (float) value/100;
+  grey.specular[3] = (float) value/100;
   this->repaint();
 }
 
@@ -548,17 +508,10 @@ void SceneWidget::paintGL(){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	// GLfloat light_pos[] = {1.5, 7, 1., 1.};
-  GLfloat light_pos[] = {0, 10, 0, 1.};
+  GLfloat light_pos[] = {-10, 20, 20, 1.};
 	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
 	glLightf (GL_LIGHT0, GL_SPOT_CUTOFF,180.);
 
-	GLfloat m[16];
-	for (int i = 0; i < 16; i++){
-    m[i] = 0.0;
-  }
-
-	m[0] = m[5] = m[10] = 1.0;
-	m[7] = -1.0/light_pos[1];
 	glPopMatrix();
 	this->floor();
 
@@ -568,28 +521,37 @@ void SceneWidget::paintGL(){
   glMatrixMode(GL_MODELVIEW);
   // glLoadIdentity();
 
+  glPushMatrix();
+  glTranslatef(0, 0, 1);
   this->openGrave();
+  glPopMatrix();
 
   glPushMatrix();
-  glTranslatef(-9, 0, 4);
+  glTranslatef(-8, 0, 1);
   this->gravestone();
   glTranslatef(2, 0, 0);
-  this->gravestone();
+  this->crossGravestone();
   glTranslatef(2, 0, 0);
   this->gravestone();
-  glTranslatef(2, 0, 0);
-  this->gravestone();
-
   glTranslatef(0, 0, -5);
-  this->gravestone();
+  this->crossGravestone();
   glTranslatef(-2, 0, 0);
   this->gravestone();
   glTranslatef(-2, 0, 0);
-  this->gravestone();
-  glTranslatef(-2, 0, 0);
-  this->gravestone();
+  this->crossGravestone();
+  glPopMatrix();
 
-
+  glPushMatrix();
+  glTranslatef(8, 0, 1);
+  this->crossGravestone();
+  glTranslatef(-2, 0, 0);
+  this->gravestone();
+  glTranslatef(-2, 0, -5);
+  this->gravestone();
+  glTranslatef(2, 0, 0);
+  this->crossGravestone();
+  glTranslatef(2, 0, 0);
+  this->gravestone();
   glPopMatrix();
 
   glPushMatrix();
@@ -597,26 +559,6 @@ void SceneWidget::paintGL(){
   glTranslatef(0, 10, -7);
   this->ghost();
   glPopMatrix();
-
-	// glPushMatrix();
-	// glTranslatef(0.,2.,0.);
-	// glRotatef(_angle, 0.,1., 0.);
-  //
-	// this->cube();
-	// glTranslatef(0.,-2.,0);
-  //
-	// // Do the projective stuff
-	// glPushMatrix();
-	// glPushAttrib(GL_CURRENT_BIT);
-  //
-	// glTranslatef(light_pos[0],light_pos[1],light_pos[2]);
-	// glMultMatrixf(m);
-	// glTranslatef(-light_pos[0],-light_pos[1],-light_pos[2]);
-  //
-	// glColor3f(0.,0.,0.);
-	// this->cube(true);
-	// glPopMatrix();
-	// glPopAttrib();
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
