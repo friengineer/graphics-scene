@@ -55,6 +55,13 @@ static materialStruct black = {
   0
 };
 
+static materialStruct brown = {
+  { 0.36, 0.25, 0.2, 1.0},
+  { 0.36, 0.25, 0.2, 1.0},
+  { 0, 0, 0, 1.0},
+  0
+};
+
 static materialStruct white = {
   { 1, 1, 1, 1.0},
   { 1, 1, 1, 1.0},
@@ -62,10 +69,24 @@ static materialStruct white = {
   0
 };
 
+static materialStruct yellow = {
+  {1, 1, 0.0, 1.0},
+  {1, 1, 0.0, 1.0},
+  {0, 0, 0, 1},
+  0
+};
+
+static materialStruct red = {
+  {1, 0.0, 0.0, 1.0},
+  {1, 0.0, 0.0, 1.0},
+  {0, 0, 0, 1},
+  0
+};
+
 materialStruct graveMaterial = {
   { 0.2, 0.2, 0.2, 1},
   { 0.2, 0.2, 0.2, 1},
-  { 0.8, 0.6, 0.6, 1},
+  { 1, 1, 1, 1},
   32
 };
 
@@ -83,7 +104,6 @@ SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent),
   speed(1),
   xView(1),
   yView(1),
-  zView(1),
   marc("Marc_Dekamps.ppm"),
   world("Mercator-projection.ppm"){
   // const std::string& fogFile = "fog-overlay-free.jpg";
@@ -284,6 +304,63 @@ void SceneWidget::crossGravestone(){
   glPopMatrix();
 }
 
+void SceneWidget::tree(){
+  materialStruct* material = &brown;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  glPushMatrix();
+  glRotatef(-90, 1, 0, 0);
+  glutSolidCone(1, 8, 10, 10);
+  glPopMatrix();
+
+  glTranslatef(0, 5, 0);
+
+  glPushMatrix();
+  glRotatef(-45, 1, 1, 0);
+  glutSolidCone(0.25, 2, 10, 10);
+  glPopMatrix();
+
+  glPushMatrix();
+  glRotatef(-135, 0, 1, 0);
+  glRotatef(-60, 1, 0, 0);
+  glutSolidCone(0.25, 4, 10, 10);
+
+  glTranslatef(0, 0, 2);
+  glRotatef(45, 1, 0, 0);
+  glutSolidCone(0.0625, 2, 10, 10);
+  glRotatef(-90, 1, 0, 0);
+  glutSolidCone(0.125, 1.5, 10, 10);
+  glPopMatrix();
+
+  glPushMatrix();
+  glRotatef(-225, 0, 1, 0);
+  glRotatef(-55, 1, 0, 0);
+  glutSolidCone(0.25, 4, 10, 10);
+
+  glTranslatef(0, 0, 2);
+  glRotatef(45, 0, 1, 0);
+  glutSolidCone(0.0625, 2, 10, 10);
+  glRotatef(-90, 0, 1, 0);
+  glutSolidCone(0.125, 1.5, 10, 10);
+  glPopMatrix();
+
+  glPushMatrix();
+  glRotatef(-315, 0, 1, 0);
+  glRotatef(-49, 1, 0, 0);
+  glutSolidCone(0.25, 4, 10, 10);
+
+  glTranslatef(0, 0, 2);
+  glRotatef(-20, 1, 1, 0);
+  glutSolidCone(0.0625, 2, 10, 10);
+  glRotatef(45, 0, 1, 0);
+  glutSolidCone(0.125, 1.5, 10, 10);
+  glPopMatrix();
+}
+
 void SceneWidget::map(){
   GLfloat normal[] = {1, 0, 0};
 
@@ -382,6 +459,77 @@ void SceneWidget::ghost(){
   glPopMatrix();
 
   glEnable(GL_LIGHTING);
+}
+
+void SceneWidget::petal(){
+  materialStruct* material = &red;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  float radius = 1;
+
+  glPushMatrix();
+  glScalef(0.3, 0.2, 0.1);
+
+  GLUquadric *oblong = gluNewQuadric();
+  gluQuadricDrawStyle(oblong, GLU_FILL);
+  gluSphere(oblong, radius, 10, 10);
+  gluDeleteQuadric(oblong);
+  glPopMatrix();
+}
+
+void SceneWidget::flower(){
+  materialStruct* material = &yellow;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  float radius = 1;
+
+  glPushMatrix();
+  glScalef(0.3, 0.2, 0.3);
+
+  GLUquadric *centre = gluNewQuadric();
+  gluQuadricDrawStyle(centre, GLU_FILL);
+  gluSphere(centre, radius, 10, 10);
+  gluDeleteQuadric(centre);
+  glPopMatrix();
+
+  // create petals around flower's centre
+  for(int i = 0; i < 8 ; i++){
+    glPushMatrix();
+    glRotatef(i * 45, 0, 1, 0);
+    glTranslatef(-0.5, 0, 0);
+    this->petal();
+    glPopMatrix();
+  }
+}
+
+void SceneWidget::bouquet(){
+  materialStruct* material = &white;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  glPushMatrix();
+  glTranslatef(0, 2, 0);
+  glRotatef(90, 1, 0, 0);
+  glutSolidCone(0.5, 2, 10, 10);
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0.25, 2.5, 0);
+  glRotatef(25, 1, 0, 0);
+  glScalef(0.5, 0.5, 0.5);
+  this->flower();
+  glPopMatrix();
 }
 
 void SceneWidget::fog(){
@@ -555,9 +703,25 @@ void SceneWidget::paintGL(){
   glPopMatrix();
 
   glPushMatrix();
+  glTranslatef(8, 0, -8);
+  this->tree();
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(-8, 0, -8);
+  glRotatef(90, 0, 1, 0);
+  this->tree();
+  glPopMatrix();
+
+  glPushMatrix();
   glRotatef(direction * _angle, 0, 1, 0);
   glTranslatef(0, 10, -7);
   this->ghost();
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0, 8, 0);
+  this->bouquet();
   glPopMatrix();
 
   glEnable(GL_BLEND);
@@ -565,7 +729,7 @@ void SceneWidget::paintGL(){
   this->fog();
 
   glLoadIdentity();
-  gluLookAt(xView,yView,zView, 0.0,0.0,0.0, 0.0,1.0,0.0);
+  gluLookAt(xView,yView,1, 0.0,0.0,0.0, 0.0,1.0,0.0);
   // gluLookAt(0.1,1.9,0.1, 0.0,0.0,0.0, 0.0,1.0,0.0);
 
 	// flush to screen

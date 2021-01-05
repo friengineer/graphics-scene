@@ -46,7 +46,7 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 
 	xViewSlider = new QSlider(Qt::Horizontal);
 	xViewSlider->setRange(-100, 100);
-	xViewSlider->setValue(0);
+	xViewSlider->setValue(100);
 	xViewSlider->setTickPosition(QSlider::TicksBelow);
 	controlsLayout->addWidget(xViewSlider);
 

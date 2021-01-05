@@ -37,8 +37,12 @@ class SceneWidget: public QGLWidget{
 	void openGrave();
 	void gravestone();
 	void crossGravestone();
+	void tree();
 	void map();
 	void ghost();
+	void petal();
+	void flower();
+	void bouquet();
 	void fog();
 
 	void polygon(int, int, int, int);
@@ -48,7 +52,6 @@ class SceneWidget: public QGLWidget{
 	float speed;
 	double xView;
 	double yView;
-	double zView;
 
 	Image marc;
 	Image world;
