@@ -55,11 +55,6 @@ class SceneWidget: public QGLWidget{
 
 	Image marc;
 	Image world;
-
-	QImage* fogTexture;
-	unsigned int fogTextureWidth;
-  unsigned int fogTextureHeight;
-
 	};
 
 #endif

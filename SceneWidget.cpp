@@ -5,7 +5,7 @@
 #include <QImage>
 #include "SceneWidget.h"
 
-// Setting up material properties
+// create materials
 typedef struct materialStruct{
   GLfloat ambient[4];
   GLfloat diffuse[4];
@@ -105,36 +105,33 @@ SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent),
   xView(1),
   yView(1),
   marc("Marc_Dekamps.ppm"),
-  world("Mercator-projection.ppm"){
-  // const std::string& fogFile = "fog-overlay-free.jpg";
-  // fogTexture = new QImage(QString(fogFile.c_str()));
-  // fogTextureWidth = fogTexture->width();
-  // fogTextureHeight = fogTexture->height();
-}
+  world("Mercator-projection.ppm"){}
 
+// set background colour
 void SceneWidget::initializeGL(){
-	// set the widget background colour
-	// glClearColor(0.3, 0.3, 0.3, 0.0);
   glClearColor(0, 0, 0.15, 0.0);
 }
 
-// called every time the widget is resized
+// called when widget is resized
 void SceneWidget::resizeGL(int w, int h){
-	// set the viewport to the entire widget
+	// set viewport to entire widget
 	glViewport(0, 0, w, h);
 
-	glEnable(GL_LIGHTING); // enable lighting in general
-  glEnable(GL_LIGHT0);   // each light source must also be enabled
+  // enable lighting light, and texturing
+	glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
   glEnable(GL_TEXTURE_2D);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+  // set viewable area
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-15.0, 15.0, -15.0, 15.0, -15.0, 15.0);
 }
 
+// create floor
 void SceneWidget::floor(){
   materialStruct* material = &green;
   // GLfloat floor = -0.01;
@@ -155,6 +152,7 @@ void SceneWidget::floor(){
   glEnd();
 }
 
+// create an open grave
 void SceneWidget::openGrave(){
   materialStruct* material = &graveMaterial;
 
@@ -163,6 +161,7 @@ void SceneWidget::openGrave(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
+  // draw side of grave, repeat
   glPushMatrix();
   glTranslatef(0, 1, 4);
   glScalef(5, 3, 0.5);
@@ -187,12 +186,14 @@ void SceneWidget::openGrave(){
   glutSolidCube(1);
   glPopMatrix();
 
+  // draw angel's body
   glPushMatrix();
   glTranslatef(0, 0, -6);
   glRotatef(-90, 1, 0, 0);
   glutSolidCone(1, 8, 10, 10);
   glPopMatrix();
 
+  // draw lid of grave
   glPushMatrix();
   glTranslatef(0, 2.5, -1.5);
   glRotatef(45, 0, 1, 0);
@@ -200,6 +201,7 @@ void SceneWidget::openGrave(){
   glutSolidCube(1);
   glPopMatrix();
 
+  // draw angel's head
   glPushMatrix();
   glTranslatef(0, 8, -6);
   GLUquadric *head = gluNewQuadric();
@@ -215,6 +217,7 @@ void SceneWidget::openGrave(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
+  // draw black inside of grave
   glPushMatrix();
   glTranslatef(0, 1.1, 0);
   glScalef(5, 0, 8);
@@ -222,8 +225,15 @@ void SceneWidget::openGrave(){
   glPopMatrix();
 }
 
+// create a cuboid gravestone
 void SceneWidget::gravestone(){
-  GLfloat normals[][3] = { {1., 0., 0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
+  // define normals for each face
+  GLfloat normals[][3] = {{1, 0, 0},
+                          {-1, 0, 0},
+                          {0, 0, 1},
+                          {0, 0, -1},
+                          {0, 1, 0},
+                          {0, -1, 0}};
 
   materialStruct* material = &graveMaterial;
 
@@ -232,6 +242,7 @@ void SceneWidget::gravestone(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
+  // assign normal for face and draw face, repeat for all faces
   glNormal3fv(normals[0]);
   glBegin(GL_POLYGON);
   glVertex3f(0.75, 0, 0.25);
@@ -283,6 +294,7 @@ void SceneWidget::gravestone(){
   glEnable(GL_LIGHTING);
 }
 
+// create a cross gravestone
 void SceneWidget::crossGravestone(){
   materialStruct* material = &graveMaterial;
 
@@ -304,6 +316,7 @@ void SceneWidget::crossGravestone(){
   glPopMatrix();
 }
 
+// create a tree
 void SceneWidget::tree(){
   materialStruct* material = &brown;
 
@@ -312,6 +325,7 @@ void SceneWidget::tree(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
+  // draw trunk
   glPushMatrix();
   glRotatef(-90, 1, 0, 0);
   glutSolidCone(1, 8, 10, 10);
@@ -319,6 +333,7 @@ void SceneWidget::tree(){
 
   glTranslatef(0, 5, 0);
 
+  // draw branch, repeat
   glPushMatrix();
   glRotatef(-45, 1, 1, 0);
   glutSolidCone(0.25, 2, 10, 10);
@@ -361,8 +376,10 @@ void SceneWidget::tree(){
   glPopMatrix();
 }
 
+// create a map
 void SceneWidget::map(){
-  GLfloat normal[] = {1, 0, 0};
+  // define normal for map
+  GLfloat normal[] = {0, 0, 1};
 
   materialStruct* material = &white;
 
@@ -378,6 +395,7 @@ void SceneWidget::map(){
   // glMaterialfv(GL_BACK, GL_SPECULAR, material->specular);
   // glMaterialf(GL_BACK, GL_SHININESS, material->shininess);
 
+  // allocate space for map texture, bind to it, load it in and define parameters
   GLuint earth;
   glGenTextures(1, &earth);
   glBindTexture(GL_TEXTURE_2D, earth);
@@ -389,6 +407,7 @@ void SceneWidget::map(){
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+  // draw textured map
   glNormal3fv(normal);
   glBegin(GL_POLYGON);
   glTexCoord2f(0.0, 0.0);
@@ -401,12 +420,14 @@ void SceneWidget::map(){
   glVertex3f(-1.5,  1, 0);
   glEnd();
 
+  // bind to default texture and delete texture
   glBindTexture(GL_TEXTURE_2D, 0);
   glDeleteTextures(1, &earth);
 
   glEnable(GL_LIGHTING);
 }
 
+// create a ghost
 void SceneWidget::ghost(){
   materialStruct* material = &white;
 
@@ -415,6 +436,7 @@ void SceneWidget::ghost(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
+  // allocate space for face texture, bind to it, load it in and define parameters
   GLuint face;
   glGenTextures(1, &face);
   glBindTexture(GL_TEXTURE_2D, face);
@@ -427,6 +449,7 @@ void SceneWidget::ghost(){
 
   float radius = 1;
 
+  // draw textured head
   glPushMatrix();
   GLUquadric *head = gluNewQuadric();
   gluQuadricDrawStyle(head, GLU_FILL);
@@ -439,9 +462,11 @@ void SceneWidget::ghost(){
   gluDeleteQuadric(head);
   glPopMatrix();
 
+  // bind to default texture and delete texture
   glBindTexture(GL_TEXTURE_2D, 0);
   glDeleteTextures(1, &face);
 
+  // draw body
   glPushMatrix();
   glTranslatef(0, -2 * radius, 0);
 
@@ -451,6 +476,7 @@ void SceneWidget::ghost(){
   gluDeleteQuadric(body);
   glPopMatrix();
 
+  // draw map
   glPushMatrix();
   glTranslatef(direction * -2 * radius, -2 * radius, 0);
   glRotatef(direction * 90, 0, 1, 0);
@@ -461,6 +487,7 @@ void SceneWidget::ghost(){
   glEnable(GL_LIGHTING);
 }
 
+// create a petal
 void SceneWidget::petal(){
   materialStruct* material = &red;
 
@@ -474,13 +501,14 @@ void SceneWidget::petal(){
   glPushMatrix();
   glScalef(0.3, 0.2, 0.1);
 
-  GLUquadric *oblong = gluNewQuadric();
-  gluQuadricDrawStyle(oblong, GLU_FILL);
-  gluSphere(oblong, radius, 10, 10);
-  gluDeleteQuadric(oblong);
+  GLUquadric *ovoid = gluNewQuadric();
+  gluQuadricDrawStyle(ovoid, GLU_FILL);
+  gluSphere(ovoid, radius, 10, 10);
+  gluDeleteQuadric(ovoid);
   glPopMatrix();
 }
 
+// create a flower
 void SceneWidget::flower(){
   materialStruct* material = &yellow;
 
@@ -491,6 +519,7 @@ void SceneWidget::flower(){
 
   float radius = 1;
 
+  // draw flower's centre
   glPushMatrix();
   glScalef(0.3, 0.2, 0.3);
 
@@ -500,7 +529,7 @@ void SceneWidget::flower(){
   gluDeleteQuadric(centre);
   glPopMatrix();
 
-  // create petals around flower's centre
+  // draw petals around flower's centre
   for(int i = 0; i < 8 ; i++){
     glPushMatrix();
     glRotatef(i * 45, 0, 1, 0);
@@ -510,6 +539,7 @@ void SceneWidget::flower(){
   }
 }
 
+// create bouquet of flowers
 void SceneWidget::bouquet(){
   materialStruct* material = &white;
 
@@ -518,22 +548,48 @@ void SceneWidget::bouquet(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
+  // draw base
   glPushMatrix();
   glTranslatef(0, 2, 0);
   glRotatef(90, 1, 0, 0);
   glutSolidCone(0.5, 2, 10, 10);
   glPopMatrix();
 
+  // draw a flower, repeat
   glPushMatrix();
-  glTranslatef(0.25, 2.5, 0);
+  glTranslatef(0, 2.25, 0.25);
   glRotatef(25, 1, 0, 0);
+  glRotatef(5 * _angle, 0, 1, 0);
+  glScalef(0.5, 0.5, 0.5);
+  this->flower();
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(-0.25, 2.25, -0.25);
+  glRotatef(25, 0, 0, 1);
+  glRotatef(5 * _angle, 0, 1, 0);
+  glScalef(0.5, 0.5, 0.5);
+  this->flower();
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(0.25, 2.25, -0.25);
+  glRotatef(-25, 0, 0, 1);
+  glRotatef(5 * _angle, 0, 1, 0);
   glScalef(0.5, 0.5, 0.5);
   this->flower();
   glPopMatrix();
 }
 
+// create fog cube
 void SceneWidget::fog(){
-  GLfloat normals[][3] = { {1., 0., 0.}, {-1., 0., 0.}, {0., 0., 1.}, {0., 0., -1.}, {0, 1, 0}, {0, -1, 0} };
+  // define normals for each face
+  GLfloat normals[][3] = {{1, 0, 0},
+                          {-1, 0, 0},
+                          {0, 0, 1},
+                          {0, 0, -1},
+                          {0, 1, 0},
+                          {0, -1, 0}};
 
   materialStruct* material = &grey;
 
@@ -542,44 +598,45 @@ void SceneWidget::fog(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
+  // assign normal for face and draw face, repeat for all faces
   glNormal3fv(normals[0]);
   glBegin(GL_POLYGON);
   glVertex3f(10, 0, 10);
   glVertex3f(10, 0, -10);
-  glVertex3f(10, 1.0, -10);
-  glVertex3f(10, 1.0, 10);
+  glVertex3f(10, 1, -10);
+  glVertex3f(10, 1, 10);
   glEnd();
 
   glNormal3fv(normals[3]);
   glBegin(GL_POLYGON);
   glVertex3f(-10, 0, -10);
   glVertex3f(10, 0, -10);
-  glVertex3f(10, 1.0, -10);
-  glVertex3f(-10, 1.0, -10);
+  glVertex3f(10, 1, -10);
+  glVertex3f(-10, 1, -10);
   glEnd();
 
   glNormal3fv(normals[2]);
   glBegin(GL_POLYGON);
   glVertex3f(-10, 0, 10);
   glVertex3f(10, 0, 10);
-  glVertex3f(10, 1.0, 10);
-  glVertex3f(-10, 1.0, 10);
+  glVertex3f(10, 1, 10);
+  glVertex3f(-10, 1, 10);
   glEnd();
 
   glNormal3fv(normals[1]);
   glBegin(GL_POLYGON);
   glVertex3f(-10, 0, 10);
   glVertex3f(-10, 0, -10);
-  glVertex3f(-10, 1.0, -10);
-  glVertex3f(-10, 1.0, 10);
+  glVertex3f(-10, 1, -10);
+  glVertex3f(-10, 1, 10);
   glEnd();
 
   glNormal3fv(normals[4]);
   glBegin(GL_POLYGON);
-  glVertex3f(10, 1.0, 10);
-  glVertex3f(10, 1.0, -10);
-  glVertex3f(-10, 1.0, -10);
-  glVertex3f(-10, 1.0, 10);
+  glVertex3f(10, 1, 10);
+  glVertex3f(10, 1, -10);
+  glVertex3f(-10, 1, -10);
+  glVertex3f(-10, 1, 10);
   glEnd();
 
   glNormal3fv(normals[5]);
@@ -593,19 +650,23 @@ void SceneWidget::fog(){
   glEnable(GL_LIGHTING);
 }
 
+// update angle of scene
 void SceneWidget::updateAngle(){
   _angle += speed;
   this->repaint();
 }
 
+// update direction of ghost
 void SceneWidget::changeDirection(){
   direction *= -1;
 }
 
+// update speed of ghost
 void SceneWidget::updateSpeed(int value){
   speed = (float) value/10;
 }
 
+// update alpha components of grey material
 void SceneWidget::updateTransparency(int value){
   grey.ambient[3] = (float) value/100;
   grey.diffuse[3] = (float) value/100;
@@ -613,59 +674,54 @@ void SceneWidget::updateTransparency(int value){
   this->repaint();
 }
 
+// update x coordinate of camera position
 void SceneWidget::updateHorizontalView(int value){
   xView = (float) value/100;
   this->repaint();
 }
 
+// update y coordinate of camera position
 void SceneWidget::updateVerticalView(int value){
   yView = (float) value/100;
-
-  // if (xView > 0){
-  //   xView = 2 - yView;
-  // } else if (xView < 0) {
-  //   xView = yView - 2;
-  // }
-
   this->repaint();
 }
 
+// update red grave material component
 void SceneWidget::updateRed(double value){
   graveMaterial.ambient[0] = value;
   graveMaterial.diffuse[0] = value;
 }
 
+// update green grave material component
 void SceneWidget::updateGreen(double value){
   graveMaterial.ambient[1] = value;
   graveMaterial.diffuse[1] = value;
 }
 
+// update blue grave material component
 void SceneWidget::updateBlue(double value){
   graveMaterial.ambient[2] = value;
   graveMaterial.diffuse[2] = value;
 }
 
-// called every time the widget needs painting
+// paint widget
 void SceneWidget::paintGL(){
-	// clear the widget
+	// clear widget
   glEnable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Position light
+	// position light
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	// GLfloat light_pos[] = {1.5, 7, 1., 1.};
-  GLfloat light_pos[] = {-10, 20, 20, 1.};
-	glLightfv(GL_LIGHT0, GL_POSITION, light_pos);
-	glLightf (GL_LIGHT0, GL_SPOT_CUTOFF,180.);
-
+  GLfloat lightPosition[] = {-100, 200, 100, 1.};
+	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+	// glLightf (GL_LIGHT0, GL_SPOT_CUTOFF,180.);
 	glPopMatrix();
+
 	this->floor();
 
-	// Done light
-
-  // You must set the matrix mode to model view directly before enabling the depth test
   glMatrixMode(GL_MODELVIEW);
   // glLoadIdentity();
 
@@ -721,17 +777,32 @@ void SceneWidget::paintGL(){
 
   glPushMatrix();
   glTranslatef(0, 8, 0);
+  glRotatef(_angle, 0, 0, 1);
+  glTranslatef(0, 2, -3);
   this->bouquet();
   glPopMatrix();
 
+  glPushMatrix();
+  glTranslatef(8, 0, 1.5);
+  glRotatef(45, 1, 0, 0);
+  this->bouquet();
+  glPopMatrix();
+
+  glPushMatrix();
+  glTranslatef(-8, 0, 1.5);
+  glRotatef(45, 1, 0, 0);
+  this->bouquet();
+  glPopMatrix();
+
+  // enable blending to allow fog to be transparent
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   this->fog();
 
   glLoadIdentity();
+  // set position of view
   gluLookAt(xView,yView,1, 0.0,0.0,0.0, 0.0,1.0,0.0);
-  // gluLookAt(0.1,1.9,0.1, 0.0,0.0,0.0, 0.0,1.0,0.0);
 
 	// flush to screen
 	glFlush();
-	}
+}
