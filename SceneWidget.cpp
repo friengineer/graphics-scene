@@ -42,43 +42,43 @@ static materialStruct goldMaterials = {
 };
 
 static materialStruct green = {
-  { 0, 0.4, 0, 1.0},
-  { 0, 0, 0, 1.0},
-  { 0, 0, 0, 1.0},
+  { 0, 0.4, 0, 1},
+  { 0, 0, 0, 1},
+  { 0, 0, 0, 1},
   0
 };
 
 static materialStruct black = {
-  { 0, 0, 0, 1.0},
-  { 0, 0, 0, 1.0},
-  { 0, 0, 0, 1.0},
+  { 0, 0, 0, 1},
+  { 0, 0, 0, 1},
+  { 0, 0, 0, 1},
   0
 };
 
 static materialStruct brown = {
-  { 0.36, 0.25, 0.2, 1.0},
-  { 0.36, 0.25, 0.2, 1.0},
-  { 0, 0, 0, 1.0},
+  { 0.36, 0.25, 0.2, 1},
+  { 0.36, 0.25, 0.2, 1},
+  { 0, 0, 0, 1},
   0
 };
 
 static materialStruct white = {
-  { 1, 1, 1, 1.0},
-  { 1, 1, 1, 1.0},
-  { 0, 0, 0, 1.0},
+  { 1, 1, 1, 1},
+  { 1, 1, 1, 1},
+  { 0, 0, 0, 1},
   0
 };
 
 static materialStruct yellow = {
-  {1, 1, 0.0, 1.0},
-  {1, 1, 0.0, 1.0},
+  {1, 1, 0, 1},
+  {1, 1, 0, 1},
   {0, 0, 0, 1},
   0
 };
 
 static materialStruct red = {
-  {1, 0.0, 0.0, 1.0},
-  {1, 0.0, 0.0, 1.0},
+  {1, 0, 0, 1},
+  {1, 0, 0, 1},
   {0, 0, 0, 1},
   0
 };
@@ -99,7 +99,7 @@ materialStruct grey = {
 
 // constructor
 SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent),
-  _angle(0.0),
+  _angle(0),
   direction(-1),
   speed(1),
   xView(1),
@@ -109,7 +109,7 @@ SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent),
 
 // set background colour
 void SceneWidget::initializeGL(){
-  glClearColor(0, 0, 0.15, 0.0);
+  glClearColor(0, 0, 0.15, 0);
 }
 
 // called when widget is resized
@@ -128,27 +128,24 @@ void SceneWidget::resizeGL(int w, int h){
   // set viewable area
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-15.0, 15.0, -15.0, 15.0, -15.0, 15.0);
+	glOrtho(-15, 15, -15, 15, -15, 15);
 }
 
 // create floor
 void SceneWidget::floor(){
   materialStruct* material = &green;
-  // GLfloat floor = -0.01;
-  GLfloat floor = 0;
-  // glColor3f(0,0.3,0);
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
-  glNormal3f(0.,1.,0.);
+  glNormal3f(0,1,0);
   glBegin(GL_POLYGON);
-    glVertex3f(-10.0, floor, 10.0);
-    glVertex3f(10.0, floor, 10.0);
-    glVertex3f(10.0, floor, -10.0);
-    glVertex3f(-10.0, floor, -10.0);
+    glVertex3f(-10, 0, 10);
+    glVertex3f(10, 0, 10);
+    glVertex3f(10, 0, -10);
+    glVertex3f(-10, 0, -10);
   glEnd();
 }
 
@@ -388,13 +385,6 @@ void SceneWidget::map(){
   glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
   glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
 
-  // material = &goldMaterials;
-  //
-  // glMaterialfv(GL_BACK, GL_AMBIENT, material->ambient);
-  // glMaterialfv(GL_BACK, GL_DIFFUSE, material->diffuse);
-  // glMaterialfv(GL_BACK, GL_SPECULAR, material->specular);
-  // glMaterialf(GL_BACK, GL_SHININESS, material->shininess);
-
   // allocate space for map texture, bind to it, load it in and define parameters
   GLuint earth;
   glGenTextures(1, &earth);
@@ -410,19 +400,43 @@ void SceneWidget::map(){
   // draw textured map
   glNormal3fv(normal);
   glBegin(GL_POLYGON);
-  glTexCoord2f(0.0, 0.0);
+  glTexCoord2f(0, 0);
   glVertex3f(-1.5, -1, 0);
-  glTexCoord2f(1.0, 0.0);
-  glVertex3f( 1.5, -1, 0);
-  glTexCoord2f(1.0, 1.0);
-  glVertex3f( 1.5,  1, 0);
-  glTexCoord2f(0.0, 1.0);
-  glVertex3f(-1.5,  1, 0);
+  glTexCoord2f(1, 0);
+  glVertex3f(1.5, -1, 0);
+  glTexCoord2f(1, 1);
+  glVertex3f(1.5, 1, 0);
+  glTexCoord2f(0, 1);
+  glVertex3f(-1.5, 1, 0);
   glEnd();
 
   // bind to default texture and delete texture
   glBindTexture(GL_TEXTURE_2D, 0);
   glDeleteTextures(1, &earth);
+
+  // set material for back of map
+  material = &goldMaterials;
+
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material->shininess);
+
+  // draw back of map
+  glPushMatrix();
+  glTranslatef(0, 0, -0.005);
+  glNormal3fv(normal);
+  glBegin(GL_POLYGON);
+  glTexCoord2f(0, 0);
+  glVertex3f(-1.5, -1, 0);
+  glTexCoord2f(1, 0);
+  glVertex3f(1.5, -1, 0);
+  glTexCoord2f(1, 1);
+  glVertex3f(1.5, 1, 0);
+  glTexCoord2f(0, 1);
+  glVertex3f(-1.5, 1, 0);
+  glEnd();
+  glPopMatrix();
 
   glEnable(GL_LIGHTING);
 }
@@ -474,6 +488,15 @@ void SceneWidget::ghost(){
   glRotatef(90, 1, 0, 0);
   gluCylinder(body, radius, radius, 3, 10, 10);
   gluDeleteQuadric(body);
+
+  GLUquadric *top = gluNewQuadric();
+  gluDisk(top, 0, radius, 10, 10);
+  gluDeleteQuadric(top);
+
+  glTranslatef(0, 0, 3);
+  GLUquadric *bottom = gluNewQuadric();
+  gluDisk(bottom, 0, radius, 10, 10);
+  gluDeleteQuadric(bottom);
   glPopMatrix();
 
   // draw map
@@ -714,7 +737,6 @@ void SceneWidget::paintGL(){
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	// GLfloat light_pos[] = {1.5, 7, 1., 1.};
   GLfloat lightPosition[] = {-100, 200, 100, 1.};
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 	// glLightf (GL_LIGHT0, GL_SPOT_CUTOFF,180.);
@@ -801,7 +823,7 @@ void SceneWidget::paintGL(){
 
   glLoadIdentity();
   // set position of view
-  gluLookAt(xView,yView,1, 0.0,0.0,0.0, 0.0,1.0,0.0);
+  gluLookAt(xView,yView,1, 0,0,0, 0,1,0);
 
 	// flush to screen
 	glFlush();
