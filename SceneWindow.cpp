@@ -2,17 +2,18 @@
 
 // constructor
 SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
+	// create menu bar
 	menuBar = new QMenuBar(this);
 	fileMenu = menuBar->addMenu("&File");
 	actionQuit = new QAction("&Quit", this);
 
 	fileMenu->addAction(actionQuit);
 
-	// windowLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+	// create subwidget layouts
 	windowLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
-	// need to create separate control widget
 	controlsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
+	// create scene and control widgets
 	sceneWidget = new SceneWidget(this);
 	controlsWidget = new QWidget(this);
 	controlsWidget->setLayout(controlsLayout);
@@ -21,7 +22,8 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	windowLayout->addWidget(sceneWidget);
 	windowLayout->addWidget(controlsWidget);
 
-	QLabel *transparencyText = new QLabel(tr("Transparency level of fog"));
+	// create transparency control
+	transparencyText = new QLabel(tr("Transparency level of fog"));
 	controlsLayout->addWidget(transparencyText);
 
 	transparencySlider = new QSlider(Qt::Horizontal);
@@ -29,10 +31,12 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	transparencySlider->setTickPosition(QSlider::TicksBelow);
 	controlsLayout->addWidget(transparencySlider);
 
+	// create direction control
 	directionButton = new QPushButton(tr("Change direction of ghost"));
 	controlsLayout->addWidget(directionButton);
 
-	QLabel *speedText = new QLabel(tr("Speed of ghost"));
+	// create speed control
+	speedText = new QLabel(tr("Speed of ghost"));
 	controlsLayout->addWidget(speedText);
 
 	speedDial = new QDial;
@@ -41,7 +45,8 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	speedDial->setNotchesVisible(true);
 	controlsLayout->addWidget(speedDial);
 
-	QLabel *horizontalText = new QLabel(tr("Horizontal view"));
+	// create view controls
+	horizontalText = new QLabel(tr("Horizontal view"));
 	controlsLayout->addWidget(horizontalText);
 
 	xViewSlider = new QSlider(Qt::Horizontal);
@@ -50,7 +55,7 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	xViewSlider->setTickPosition(QSlider::TicksBelow);
 	controlsLayout->addWidget(xViewSlider);
 
-	QLabel *verticalText = new QLabel(tr("Vertical view"));
+	verticalText = new QLabel(tr("Vertical view"));
 	controlsLayout->addWidget(verticalText);
 
 	yViewSlider = new QSlider(Qt::Horizontal);
@@ -59,10 +64,11 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	yViewSlider->setTickPosition(QSlider::TicksBelow);
 	controlsLayout->addWidget(yViewSlider);
 
-	QLabel *gravestoneText = new QLabel(tr("Gravestone colour"));
+	// create gravestone colour controls
+	gravestoneText = new QLabel(tr("Gravestone colour"));
 	controlsLayout->addWidget(gravestoneText);
 
-	QLabel *redText = new QLabel(tr("Red"));
+	redText = new QLabel(tr("Red"));
 	controlsLayout->addWidget(redText);
 
 	redBox = new QDoubleSpinBox;
@@ -71,7 +77,7 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	redBox->setValue(0.2);
 	controlsLayout->addWidget(redBox);
 
-	QLabel *greenText = new QLabel(tr("Green"));
+	greenText = new QLabel(tr("Green"));
 	controlsLayout->addWidget(greenText);
 
 	greenBox = new QDoubleSpinBox;
@@ -80,7 +86,7 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	greenBox->setValue(0.2);
 	controlsLayout->addWidget(greenBox);
 
-	QLabel *blueText = new QLabel(tr("Blue"));
+	blueText = new QLabel(tr("Blue"));
 	controlsLayout->addWidget(blueText);
 
 	blueBox = new QDoubleSpinBox;
@@ -89,9 +95,11 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	blueBox->setValue(0.2);
 	controlsLayout->addWidget(blueBox);
 
+	// create timer
 	ptimer = new QTimer(this);
 	ptimer->start(20);
 
+	// connect widgets to scene functions
 	connect(transparencySlider, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateTransparency(int)));
 	connect(directionButton, SIGNAL(clicked()), sceneWidget, SLOT(changeDirection()));
 	connect(speedDial, SIGNAL(valueChanged(int)), sceneWidget, SLOT(updateSpeed(int)));
@@ -107,15 +115,21 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 SceneWindow::~SceneWindow(){
 	delete ptimer;
 	delete blueBox;
+	delete blueText;
 	delete greenBox;
+	delete greenText;
 	delete redBox;
+	delete redText;
+	delete gravestoneText;
 	delete yViewSlider;
+	delete verticalText;
 	delete xViewSlider;
+	delete horizontalText;
 	delete speedDial;
-	// delete speedText;
+	delete speedText;
 	delete directionButton;
 	delete transparencySlider;
-	// delete transparencyText;
+	delete transparencyText;
 	delete controlsWidget;
 	delete sceneWidget;
 	delete controlsLayout;
@@ -139,7 +153,7 @@ void SceneWindow::ResetInterface(){
 	yViewSlider->setMinimum(1);
 	yViewSlider->setMaximum(199);
 
-	// now force refresh
+	// force refresh
 	controlsWidget->update();
 	update();
 }

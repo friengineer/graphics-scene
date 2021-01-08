@@ -5,27 +5,13 @@
 #include <QImage>
 #include "SceneWidget.h"
 
-// create materials
+// structure containing material properties
 typedef struct materialStruct{
   GLfloat ambient[4];
   GLfloat diffuse[4];
   GLfloat specular[4];
   GLfloat shininess;
 } materialStruct;
-
-static materialStruct redPlasticMaterials = {
-  {0.3, 0.0, 0.0, 1.0},
-  {0.6, 0.0, 0.0, 1.0},
-  {0.8, 0.6, 0.6, 1.0},
-  32.0
-};
-
-static materialStruct brassMaterials = {
-  { 0.33, 0.22, 0.03, 1.0},
-  { 0.78, 0.57, 0.11, 1.0},
-  { 0.99, 0.91, 0.81, 1.0},
-  27.8
-};
 
 static materialStruct whiteShinyMaterials = {
   { 1.0, 1.0, 1.0, 1.0},
@@ -100,24 +86,24 @@ materialStruct grey = {
 // constructor
 SceneWidget::SceneWidget(QWidget *parent):QGLWidget(parent),
   _angle(0),
-  direction(-1),
-  speed(1),
-  xView(1),
-  yView(1),
-  marc("Marc_Dekamps.ppm"),
-  world("Mercator-projection.ppm"){}
+  _direction(-1),
+  _speed(1),
+  _xView(1),
+  _yView(1),
+  _marc("Marc_Dekamps.ppm"),
+  _world("Mercator-projection.ppm"){}
 
-// set background colour
+// initialises widget by setting the background colour
 void SceneWidget::initializeGL(){
   glClearColor(0, 0, 0.15, 0);
 }
 
-// called when widget is resized
+// called when widget is resized with specified width and height
 void SceneWidget::resizeGL(int w, int h){
 	// set viewport to entire widget
 	glViewport(0, 0, w, h);
 
-  // enable lighting light, and texturing
+  // enable lighting, light and texturing
 	glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
   glEnable(GL_TEXTURE_2D);
@@ -142,10 +128,10 @@ void SceneWidget::floor(){
 
   glNormal3f(0,1,0);
   glBegin(GL_POLYGON);
-    glVertex3f(-10, 0, 10);
-    glVertex3f(10, 0, 10);
-    glVertex3f(10, 0, -10);
-    glVertex3f(-10, 0, -10);
+  glVertex3f(-10, 0, 10);
+  glVertex3f(10, 0, 10);
+  glVertex3f(10, 0, -10);
+  glVertex3f(-10, 0, -10);
   glEnd();
 }
 
@@ -203,7 +189,7 @@ void SceneWidget::openGrave(){
   glTranslatef(0, 8, -6);
   GLUquadric *head = gluNewQuadric();
   gluQuadricDrawStyle(head, GLU_FILL);
-  gluSphere(head, 1, 10, 10);
+  gluSphere(head, 1, 40, 40);
   gluDeleteQuadric(head);
   glPopMatrix();
 
@@ -373,6 +359,34 @@ void SceneWidget::tree(){
   glPopMatrix();
 }
 
+// create body
+void SceneWidget::body(){
+  materialStruct* material = &white;
+
+  glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, material->specular);
+  glMaterialf(GL_FRONT, GL_SHININESS, material->shininess);
+
+  float radius = 1;
+
+  glPushMatrix();
+  GLUquadric *body = gluNewQuadric();
+  glRotatef(90, 1, 0, 0);
+  gluCylinder(body, radius, radius, 3, 40, 40);
+  gluDeleteQuadric(body);
+
+  GLUquadric *top = gluNewQuadric();
+  gluDisk(top, 0, radius, 40, 40);
+  gluDeleteQuadric(top);
+
+  glTranslatef(0, 0, 3);
+  GLUquadric *bottom = gluNewQuadric();
+  gluDisk(bottom, 0, radius, 40, 40);
+  gluDeleteQuadric(bottom);
+  glPopMatrix();
+}
+
 // create a map
 void SceneWidget::map(){
   // define normal for map
@@ -390,7 +404,7 @@ void SceneWidget::map(){
   glGenTextures(1, &earth);
   glBindTexture(GL_TEXTURE_2D, earth);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, world.Width(), world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, world.imageField());
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _world.Width(), _world.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, _world.imageField());
 
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -425,6 +439,7 @@ void SceneWidget::map(){
   // draw back of map
   glPushMatrix();
   glTranslatef(0, 0, -0.005);
+
   glNormal3fv(normal);
   glBegin(GL_POLYGON);
   glTexCoord2f(0, 0);
@@ -454,7 +469,7 @@ void SceneWidget::ghost(){
   GLuint face;
   glGenTextures(1, &face);
   glBindTexture(GL_TEXTURE_2D, face);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, marc.Width(), marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, marc.imageField());
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _marc.Width(), _marc.Height(), 0, GL_RGB, GL_UNSIGNED_BYTE, _marc.imageField());
 
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -472,7 +487,8 @@ void SceneWidget::ghost(){
   glRotatef(-90, 1, 0, 0);
   glRotatef(90, 0, 0, 1);
   glRotatef(2 * _angle, 0, 0, 1);
-  gluSphere(head, radius, 10, 10);
+
+  gluSphere(head, radius, 40, 40);
   gluDeleteQuadric(head);
   glPopMatrix();
 
@@ -483,26 +499,13 @@ void SceneWidget::ghost(){
   // draw body
   glPushMatrix();
   glTranslatef(0, -2 * radius, 0);
-
-  GLUquadric *body = gluNewQuadric();
-  glRotatef(90, 1, 0, 0);
-  gluCylinder(body, radius, radius, 3, 10, 10);
-  gluDeleteQuadric(body);
-
-  GLUquadric *top = gluNewQuadric();
-  gluDisk(top, 0, radius, 10, 10);
-  gluDeleteQuadric(top);
-
-  glTranslatef(0, 0, 3);
-  GLUquadric *bottom = gluNewQuadric();
-  gluDisk(bottom, 0, radius, 10, 10);
-  gluDeleteQuadric(bottom);
+  this->body();
   glPopMatrix();
 
   // draw map
   glPushMatrix();
-  glTranslatef(direction * -2 * radius, -2 * radius, 0);
-  glRotatef(direction * 90, 0, 1, 0);
+  glTranslatef(_direction * -2 * radius, -2 * radius, 0);
+  glRotatef(_direction * 90, 0, 1, 0);
   glRotatef(-_angle, 0, 0, 1);
   this->map();
   glPopMatrix();
@@ -564,7 +567,7 @@ void SceneWidget::flower(){
 
 // create bouquet of flowers
 void SceneWidget::bouquet(){
-  materialStruct* material = &white;
+  materialStruct* material = &whiteShinyMaterials;
 
   glMaterialfv(GL_FRONT, GL_AMBIENT, material->ambient);
   glMaterialfv(GL_FRONT, GL_DIFFUSE, material->diffuse);
@@ -675,18 +678,18 @@ void SceneWidget::fog(){
 
 // update angle of scene
 void SceneWidget::updateAngle(){
-  _angle += speed;
+  _angle += _speed;
   this->repaint();
 }
 
 // update direction of ghost
 void SceneWidget::changeDirection(){
-  direction *= -1;
+  _direction *= -1;
 }
 
 // update speed of ghost
 void SceneWidget::updateSpeed(int value){
-  speed = (float) value/10;
+  _speed = (float) value/10;
 }
 
 // update alpha components of grey material
@@ -699,13 +702,13 @@ void SceneWidget::updateTransparency(int value){
 
 // update x coordinate of camera position
 void SceneWidget::updateHorizontalView(int value){
-  xView = (float) value/100;
+  _xView = (float) value/100;
   this->repaint();
 }
 
 // update y coordinate of camera position
 void SceneWidget::updateVerticalView(int value){
-  yView = (float) value/100;
+  _yView = (float) value/100;
   this->repaint();
 }
 
@@ -737,21 +740,24 @@ void SceneWidget::paintGL(){
 	glPushMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-  GLfloat lightPosition[] = {-100, 200, 100, 1.};
+  GLfloat lightPosition[] = {-100, 200, 100, 1};
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 	// glLightf (GL_LIGHT0, GL_SPOT_CUTOFF,180.);
 	glPopMatrix();
 
+  // draw floor
 	this->floor();
 
   glMatrixMode(GL_MODELVIEW);
   // glLoadIdentity();
 
+  // draw open grave
   glPushMatrix();
   glTranslatef(0, 0, 1);
   this->openGrave();
   glPopMatrix();
 
+  // draw gravestones
   glPushMatrix();
   glTranslatef(-8, 0, 1);
   this->gravestone();
@@ -780,6 +786,7 @@ void SceneWidget::paintGL(){
   this->gravestone();
   glPopMatrix();
 
+  // draw trees
   glPushMatrix();
   glTranslatef(8, 0, -8);
   this->tree();
@@ -791,12 +798,14 @@ void SceneWidget::paintGL(){
   this->tree();
   glPopMatrix();
 
+  // draw ghost
   glPushMatrix();
-  glRotatef(direction * _angle, 0, 1, 0);
+  glRotatef(_direction * _angle, 0, 1, 0);
   glTranslatef(0, 10, -7);
   this->ghost();
   glPopMatrix();
 
+  // draw flying bouquet
   glPushMatrix();
   glTranslatef(0, 8, 0);
   glRotatef(_angle, 0, 0, 1);
@@ -804,6 +813,7 @@ void SceneWidget::paintGL(){
   this->bouquet();
   glPopMatrix();
 
+  // draw bouquets
   glPushMatrix();
   glTranslatef(8, 0, 1.5);
   glRotatef(45, 1, 0, 0);
@@ -816,14 +826,14 @@ void SceneWidget::paintGL(){
   this->bouquet();
   glPopMatrix();
 
-  // enable blending to allow fog to be transparent
+  // enable blending to allow fog to be transparent and draw fog
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   this->fog();
 
   glLoadIdentity();
-  // set position of view
-  gluLookAt(xView,yView,1, 0,0,0, 0,1,0);
+  // set view position
+  gluLookAt(_xView,_yView,1, 0,0,0, 0,1,0);
 
 	// flush to screen
 	glFlush();

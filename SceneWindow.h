@@ -12,29 +12,39 @@
 #include <QBoxLayout>
 #include "SceneWidget.h"
 
-// window for the scene
+// window for scene
 class SceneWindow: public QWidget{
 	public:
+		
 	SceneWindow(QWidget *parent);
 	~SceneWindow();
 
+	// menu widgets
 	QMenuBar *menuBar;
 	QMenu *fileMenu;
 	QAction *actionQuit;
 
+	// widgets
 	QBoxLayout *windowLayout;
 	QBoxLayout *controlsLayout;
 	SceneWidget *sceneWidget;
 	QWidget *controlsWidget;
+	QLabel *transparencyText;
 	QSlider *transparencySlider;
 	QPushButton *directionButton;
+	QLabel *speedText;
 	QDial *speedDial;
+	QLabel *horizontalText;
 	QSlider *xViewSlider;
+	QLabel *verticalText;
 	QSlider *yViewSlider;
+	QLabel *gravestoneText;
+	QLabel *redText;
 	QDoubleSpinBox *redBox;
+	QLabel *greenText;
 	QDoubleSpinBox *greenBox;
+	QLabel *blueText;
 	QDoubleSpinBox *blueBox;
-
 	QTimer *ptimer;
 
 	void ResetInterface();

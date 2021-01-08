@@ -9,10 +9,11 @@ class SceneWidget: public QGLWidget{
 	Q_OBJECT
 
 	public:
+		
 	SceneWidget(QWidget *parent);
 
 	public slots:
-  // called by the timer in the main window
+
 	void updateAngle();
 	void changeDirection();
 	void updateSpeed(int value);
@@ -24,20 +25,20 @@ class SceneWidget: public QGLWidget{
 	void updateBlue(double);
 
 	protected:
-	// called when OpenGL context is set up
+
 	void initializeGL();
-	// called every time the widget is resized
 	void resizeGL(int w, int h);
-	// called every time the widget needs painting
 	void paintGL();
 
 	private:
 
+	// widget methods
 	void floor();
 	void openGrave();
 	void gravestone();
 	void crossGravestone();
 	void tree();
+	void body();
 	void map();
 	void ghost();
 	void petal();
@@ -45,16 +46,14 @@ class SceneWidget: public QGLWidget{
 	void bouquet();
 	void fog();
 
-	void polygon(int, int, int, int);
-
+	// global variables of widget
 	double _angle;
-	float direction;
-	float speed;
-	double xView;
-	double yView;
-
-	Image marc;
-	Image world;
-	};
+	float _direction;
+	float _speed;
+	double _xView;
+	double _yView;
+	Image _marc;
+	Image _world;
+};
 
 #endif
