@@ -23,7 +23,7 @@ SceneWindow::SceneWindow(QWidget *parent):QWidget(parent){
 	windowLayout->addWidget(controlsWidget);
 
 	// create transparency control
-	transparencyText = new QLabel(tr("Transparency level of fog"));
+	transparencyText = new QLabel(tr("Translucency level of fog"));
 	controlsLayout->addWidget(transparencyText);
 
 	transparencySlider = new QSlider(Qt::Horizontal);

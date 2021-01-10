@@ -2,7 +2,7 @@
 #include <GL/glut.h>
 #include <QGLWidget>
 #include <string>
-#include <QImage>
+// #include <QImage>
 #include "SceneWidget.h"
 
 // structure containing material properties
@@ -14,44 +14,44 @@ typedef struct materialStruct{
 } materialStruct;
 
 static materialStruct whiteShinyMaterials = {
-  { 1.0, 1.0, 1.0, 1.0},
-  { 1.0, 1.0, 1.0, 1.0},
-  { 1.0, 1.0, 1.0, 1.0},
-  100.0
+  {1, 1, 1, 1},
+  {1, 1, 1, 1},
+  {1, 1, 1, 1},
+  100
 };
 
 static materialStruct goldMaterials = {
-  { 0.24725, 0.1995, 0.0745, 1.0},
-  { 0.75164, 0.60648, 0.22648, 1.0},
-  { 0.628281, 0.555802, 0.366065, 1.0},
+  {0.24725, 0.1995, 0.0745, 1},
+  {0.75164, 0.60648, 0.22648, 1},
+  {0.628281, 0.555802, 0.366065, 1},
   100
 };
 
 static materialStruct green = {
-  { 0, 0.4, 0, 1},
-  { 0, 0, 0, 1},
-  { 0, 0, 0, 1},
+  {0, 0.4, 0, 1},
+  {0, 0, 0, 1},
+  {0, 0, 0, 1},
   0
 };
 
 static materialStruct black = {
-  { 0, 0, 0, 1},
-  { 0, 0, 0, 1},
-  { 0, 0, 0, 1},
+  {0, 0, 0, 1},
+  {0, 0, 0, 1},
+  {0, 0, 0, 1},
   0
 };
 
 static materialStruct brown = {
-  { 0.36, 0.25, 0.2, 1},
-  { 0.36, 0.25, 0.2, 1},
-  { 0, 0, 0, 1},
+  {0.36, 0.25, 0.2, 1},
+  {0.36, 0.25, 0.2, 1},
+  {0, 0, 0, 1},
   0
 };
 
 static materialStruct white = {
-  { 1, 1, 1, 1},
-  { 1, 1, 1, 1},
-  { 0, 0, 0, 1},
+  {1, 1, 1, 1},
+  {1, 1, 1, 1},
+  {0, 0, 0, 1},
   0
 };
 
@@ -70,16 +70,16 @@ static materialStruct red = {
 };
 
 materialStruct graveMaterial = {
-  { 0.2, 0.2, 0.2, 1},
-  { 0.2, 0.2, 0.2, 1},
-  { 1, 1, 1, 1},
+  {0.2, 0.2, 0.2, 1},
+  {0.2, 0.2, 0.2, 1},
+  {1, 1, 1, 1},
   32
 };
 
 materialStruct grey = {
-  { 1, 1, 1, 0.5},
-  { 0, 0, 0, 0.5},
-  { 0, 0, 0, 0.5},
+  {1, 1, 1, 0.5},
+  {0, 0, 0, 0.5},
+  {0, 0, 0, 0.5},
   0
 };
 
@@ -408,8 +408,8 @@ void SceneWidget::map(){
 
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   // draw textured map
   glNormal3fv(normal);
@@ -473,8 +473,8 @@ void SceneWidget::ghost(){
 
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   float radius = 1;
 
@@ -484,6 +484,7 @@ void SceneWidget::ghost(){
   gluQuadricDrawStyle(head, GLU_FILL);
   gluQuadricTexture(head, GL_TRUE);
 
+  // rotate head
   glRotatef(-90, 1, 0, 0);
   glRotatef(90, 0, 0, 1);
   glRotatef(2 * _angle, 0, 0, 1);
@@ -502,7 +503,7 @@ void SceneWidget::ghost(){
   this->body();
   glPopMatrix();
 
-  // draw map
+  // draw map and rotate it
   glPushMatrix();
   glTranslatef(_direction * -2 * radius, -2 * radius, 0);
   glRotatef(_direction * 90, 0, 1, 0);
@@ -581,7 +582,7 @@ void SceneWidget::bouquet(){
   glutSolidCone(0.5, 2, 10, 10);
   glPopMatrix();
 
-  // draw a flower, repeat
+  // draw a flower, rotate it, repeat
   glPushMatrix();
   glTranslatef(0, 2.25, 0.25);
   glRotatef(25, 1, 0, 0);

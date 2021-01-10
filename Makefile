@@ -857,9 +857,9 @@ SceneWidget.o: SceneWidget.cpp /home/cserv1_b/apps/install/qt/5.3.1/5.3/gcc_64/i
 		/home/cserv1_b/apps/install/qt/5.3.1/5.3/gcc_64/include/QtOpenGL/qtopenglglobal.h \
 		/home/cserv1_b/apps/install/qt/5.3.1/5.3/gcc_64/include/QtGui/QSurfaceFormat \
 		/home/cserv1_b/apps/install/qt/5.3.1/5.3/gcc_64/include/QtGui/qsurfaceformat.h \
-		/home/cserv1_b/apps/install/qt/5.3.1/5.3/gcc_64/include/QtGui/QImage \
 		SceneWidget.h \
-		Image.h
+		Image.h \
+		/home/cserv1_b/apps/install/qt/5.3.1/5.3/gcc_64/include/QtGui/QImage
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SceneWidget.o SceneWidget.cpp
 
 SceneWindow.o: SceneWindow.cpp SceneWindow.h \
